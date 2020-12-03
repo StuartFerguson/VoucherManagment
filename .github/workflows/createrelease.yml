@@ -55,7 +55,7 @@ jobs:
         octo pack
         --outFolder /home/runner/work/VoucherManagement/VoucherManagement
         --basePath /home/runner/work/VoucherManagement/VoucherManagement/publishOutput
-        --id TransactionProcessor
+        --id VoucherManagement
         --version ${{ steps.get_version.outputs.VERSION }}
         --format zip
         --verbose
