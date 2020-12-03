@@ -3,6 +3,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
+COPY ["TransactionProcessor/NuGet.Config", "."]
 COPY ["VoucherManagement/VoucherManagement.csproj", "VoucherManagement/"]
 RUN dotnet restore "VoucherManagement/VoucherManagement.csproj"
 COPY . .
