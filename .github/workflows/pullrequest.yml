@@ -32,5 +32,5 @@ jobs:
     - name: Build Docker Image
       run: docker build . --file VoucherManagement/Dockerfile --tag vouchermanagement:latest
 
-    #- name: Run Integration Tests
-    #  run: dotnet test "VoucherManagement.IntegrationTests\VoucherManagement.IntegrationTests.csproj" --filter Category=PRTest
+    - name: Run Integration Tests
+      run: dotnet test "VoucherManagement.IntegrationTests\VoucherManagement.IntegrationTests.csproj" --filter Category=PRTest
