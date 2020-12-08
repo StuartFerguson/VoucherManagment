@@ -101,9 +101,9 @@ jobs:
 
     - name: Build and Publish Nuget Packages
       run: |
-        dotnet pack "VoucherManagement.Client\VoucherManagement.Client.csproj" /p:PackageVersion=${{ steps.next_version.outputs.VERSION }} --output Nugets
-        dotnet nuget push Nugets/VoucherManagement.Client.${{ steps.next_version.outputs.VERSION }}.nupkg --api-key ${{ secrets.MYGET_APIKEY }} --source https://www.myget.org/F/transactionprocessing/api/v2/package
-        dotnet pack "VoucherManagement.Voucher.DomainEvents\VoucherManagement.Voucher.DomainEvents.csproj" /p:PackageVersion=${{ steps.next_version.outputs.VERSION }} --output Nugets
-        dotnet nuget push Nugets/VoucherManagement.Voucher.DomainEvents.${{ steps.next_version.outputs.VERSION }}.nupkg --api-key ${{ secrets.MYGET_APIKEY }} --source https://www.myget.org/F/transactionprocessing/api/v2/package
+        dotnet pack "VoucherManagement.Client\VoucherManagement.Client.csproj" /p:PackageVersion=${{ steps.get_version.outputs.VERSION }} --output Nugets
+        dotnet nuget push Nugets/VoucherManagement.Client.${{ steps.get_version.outputs.VERSION }}.nupkg --api-key ${{ secrets.MYGET_APIKEY }} --source https://www.myget.org/F/transactionprocessing/api/v2/package
+        dotnet pack "VoucherManagement.Voucher.DomainEvents\VoucherManagement.Voucher.DomainEvents.csproj" /p:PackageVersion=${{ steps.get_version.outputs.VERSION }} --output Nugets
+        dotnet nuget push Nugets/VoucherManagement.Voucher.DomainEvents.${{ steps.get_version.outputs.VERSION }}.nupkg --api-key ${{ secrets.MYGET_APIKEY }} --source https://www.myget.org/F/transactionprocessing/api/v2/package
 
 
