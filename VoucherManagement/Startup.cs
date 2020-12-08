@@ -12,13 +12,19 @@ using System.Threading.Tasks;
 
 namespace VoucherManagement
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Net.Http;
     using System.Reflection;
     using System.Xml;
+    using BusinessLogic.RequestHandlers;
+    using BusinessLogic.Requests;
+    using BusinessLogic.Services;
     using Common;
+    using EstateManagement.Client;
     using EventStore.Client;
     using HealthChecks.UI.Client;
+    using MediatR;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -26,12 +32,22 @@ namespace VoucherManagement
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Logging;
+    using Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using NLog.Extensions.Logging;
+    using SecurityService.Client;
+    using Shared.EntityFramework.ConnectionStringConfiguration;
+    using Shared.EventStore.EventStore;
+    using Shared.Extensions;
     using Shared.General;
+    using Shared.Logger;
+    using Shared.Repositories;
     using Swashbuckle.AspNetCore.Filters;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using ILogger = Microsoft.Extensions.Logging.ILogger;
 
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IWebHostEnvironment webHostEnvironment)
@@ -69,19 +85,68 @@ namespace VoucherManagement
         {
             ConfigurationReader.Initialise(Startup.Configuration);
 
+            Startup.ConfigureEventStoreSettings();
+
             this.ConfigureMiddlewareServices(services);
 
+            services.AddTransient<IMediator, Mediator>();
+
             ConfigurationReader.Initialise(Startup.Configuration);
+
+            String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");
+            String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
+            Int32 httpPort = Startup.Configuration.GetValue<Int32>("EventStoreSettings:HttpPort");
+
+            Boolean useConnectionStringConfig = Boolean.Parse(ConfigurationReader.GetValue("AppSettings", "UseConnectionStringConfig"));
+
+            if (useConnectionStringConfig)
+            {
+                String connectionStringConfigurationConnString = ConfigurationReader.GetConnectionString("ConnectionStringConfiguration");
+                services.AddSingleton<IConnectionStringConfigurationRepository, ConnectionStringConfigurationRepository>();
+                services.AddTransient<ConnectionStringConfigurationContext>(c =>
+                                                                            {
+                                                                                return new ConnectionStringConfigurationContext(connectionStringConfigurationConnString);
+                                                                            });
+
+                // TODO: Read this from a the database and set
+            }
+            else
+            {
+                services.AddEventStoreClient(Startup.ConfigureEventStoreSettings);
+                services.AddEventStoreProjectionManagerClient(Startup.ConfigureEventStoreSettings);
+            }
+
+            services.AddTransient<IEventStoreContext, EventStoreContext>();
+            services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate>, AggregateRepository<VoucherAggregate.VoucherAggregate>>();
+            services.AddSingleton<IVoucherDomainService, VoucherDomainService>();
+            services.AddSingleton<Factories.IModelFactory, Factories.ModelFactory>();
+
+            services.AddSingleton<Func<String, String>>(container => (serviceName) =>
+                                                                     {
+                                                                         return ConfigurationReader.GetBaseServerUri(serviceName).OriginalString;
+                                                                     });
+
+            services.AddSingleton<HttpClient>();
+            services.AddSingleton<IEstateClient, EstateClient>();
+            services.AddSingleton<ISecurityServiceClient, SecurityServiceClient>();
+
+            // request & notification handlers
+            services.AddTransient<ServiceFactory>(context =>
+                                                  {
+                                                      return t => context.GetService(t);
+                                                  });
+
+            services.AddSingleton<IRequestHandler<IssueVoucherRequest, IssueVoucherResponse>, VoucherManagementRequestHandler>();
         }
 
         private void ConfigureMiddlewareServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                    //.AddEventStore(Startup.EventStoreClientSettings,
-                    //               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
-                    //               name: "Eventstore",
-                    //               failureStatus: HealthStatus.Unhealthy,
-                    //               tags: new string[] { "db", "eventstore" })
+                    .AddEventStore(Startup.EventStoreClientSettings,
+                                   userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
+                                   name: "Eventstore",
+                                   failureStatus: HealthStatus.Unhealthy,
+                                   tags: new string[] { "db", "eventstore" })
                     .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
                                  name:"Security Service",
                                  httpMethod:HttpMethod.Get,
@@ -177,16 +242,16 @@ namespace VoucherManagement
                 app.UseDeveloperExceptionPage();
             }
 
-            //loggerFactory.ConfigureNLog(Path.Combine(env.ContentRootPath, nlogConfigFilename));
-            //loggerFactory.AddNLog();
+            loggerFactory.ConfigureNLog(Path.Combine(env.ContentRootPath, nlogConfigFilename));
+            loggerFactory.AddNLog();
 
             ILogger logger = loggerFactory.CreateLogger("VoucherManagement");
 
-            //Logger.Initialise(logger);
+            Logger.Initialise(logger);
 
-            //app.AddRequestLogging();
-            //app.AddResponseLogging();
-            //app.AddExceptionHandler();
+            app.AddRequestLogging();
+            app.AddResponseLogging();
+            app.AddExceptionHandler();
 
             app.UseRouting();
 
@@ -214,6 +279,43 @@ namespace VoucherManagement
                                      options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                                  }
                              });
+        }
+
+        /// <summary>
+        /// The event store client settings
+        /// </summary>
+        private static EventStoreClientSettings EventStoreClientSettings;
+
+        /// <summary>
+        /// Configures the event store settings.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        private static void ConfigureEventStoreSettings(EventStoreClientSettings settings = null)
+        {
+            if (settings == null)
+            {
+                settings = new EventStoreClientSettings();
+            }
+
+            settings.CreateHttpMessageHandler = () => new SocketsHttpHandler
+            {
+                SslOptions =
+                                                          {
+                                                              RemoteCertificateValidationCallback = (sender,
+                                                                                                     certificate,
+                                                                                                     chain,
+                                                                                                     errors) => true,
+                                                          }
+            };
+            settings.ConnectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
+            settings.ConnectivitySettings = new EventStoreClientConnectivitySettings
+            {
+                Address = new Uri(Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString")),
+            };
+
+            settings.DefaultCredentials = new UserCredentials(Startup.Configuration.GetValue<String>("EventStoreSettings:UserName"),
+                                                              Startup.Configuration.GetValue<String>("EventStoreSettings:Password"));
+            Startup.EventStoreClientSettings = settings;
         }
     }
 }

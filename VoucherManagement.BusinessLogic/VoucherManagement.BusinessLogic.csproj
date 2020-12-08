@@ -4,4 +4,18 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EstateManagement.Client" Version="1.0.6" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="SecurityService.Client" Version="1.0.4" />
+    <PackageReference Include="Shared.DomainDrivenDesign" Version="1.0.1" />
+    <PackageReference Include="Shared.EventStore" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoucherManagement.DataTransferObjects\VoucherManagement.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\VoucherManagement.Models\VoucherManagement.Models.csproj" />
+    <ProjectReference Include="..\VoucherManagement.VoucherAggregate\VoucherManagement.VoucherAggregate.csproj" />
+  </ItemGroup>
+
 </Project>
