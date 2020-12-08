@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
-    <PackageReference Include="Shouldly" Version="4.0.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VoucherManagement.Testing\VoucherManagement.Testing.csproj" />
-    <ProjectReference Include="..\VoucherManagement\VoucherManagement.csproj" />
+    <ProjectReference Include="..\VoucherManagement.BusinessLogic\VoucherManagement.BusinessLogic.csproj" />
+    <ProjectReference Include="..\VoucherManagement.Models\VoucherManagement.Models.csproj" />
   </ItemGroup>
 
 </Project>
