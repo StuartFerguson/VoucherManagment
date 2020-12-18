@@ -50,14 +50,16 @@ namespace VoucherManagement.Controllers
             }
 
             Guid voucherId = Guid.NewGuid();
+            DateTime issuedDateTime = issueVoucherRequest.IssuedDateTime.HasValue ? issueVoucherRequest.IssuedDateTime.Value : DateTime.Now;
 
             BusinessLogic.Requests.IssueVoucherRequest request = BusinessLogic.Requests.IssueVoucherRequest.Create(voucherId,
-             issueVoucherRequest.OperatorIdentifier,
-                 issueVoucherRequest.EstateId,
-                 issueVoucherRequest.TransactionId,
-                 issueVoucherRequest.Value,
-                 issueVoucherRequest.RecipientEmail,
-                 issueVoucherRequest.RecipientMobile);
+                issueVoucherRequest.OperatorIdentifier,
+                issueVoucherRequest.EstateId,
+                issueVoucherRequest.TransactionId,
+                issuedDateTime,
+                issueVoucherRequest.Value,
+                issueVoucherRequest.RecipientEmail,
+                issueVoucherRequest.RecipientMobile);
 
             Models.IssueVoucherResponse response = await this.Mediator.Send(request, cancellationToken);
             

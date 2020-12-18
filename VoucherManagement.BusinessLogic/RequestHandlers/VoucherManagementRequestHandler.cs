@@ -46,7 +46,8 @@
         public async Task<IssueVoucherResponse> Handle(IssueVoucherRequest request,
                                                        CancellationToken cancellationToken)
         {
-            return await this.VoucherDomainService.IssueVoucher(request.VoucherId, request.OperatorIdentifier, request.EstateId, request.Value,
+            return await this.VoucherDomainService.IssueVoucher(request.VoucherId, request.OperatorIdentifier, request.EstateId, request.TransactionId,
+                                                                request.IssuedDateTime, request.Value,
                                                                 request.RecipientEmail, request.RecipientMobile, cancellationToken);
         }
     }

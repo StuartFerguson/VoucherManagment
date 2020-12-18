@@ -100,10 +100,13 @@ namespace VoucherManagement.Testing
 
         public static String RecipientMobile = "123456789";
 
+        public static DateTime IssuedDateTime = new DateTime(2020, 11, 5);
+
         public static IssueVoucherRequest IssueVoucherRequest = IssueVoucherRequest.Create(TestData.VoucherId,
                                                                                            TestData.OperatorIdentifier,
                                                                                            TestData.EstateId,
                                                                                            TestData.TransactionId,
+                                                                                           TestData.IssuedDateTime,
                                                                                            TestData.Value,
                                                                                            TestData.RecipientEmail,
                                                                                            TestData.RecipientMobile);
