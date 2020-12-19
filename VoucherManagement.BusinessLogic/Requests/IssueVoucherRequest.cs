@@ -13,6 +13,12 @@ namespace VoucherManagement.BusinessLogic.Requests
     /// <seealso cref="MediatR.IRequest{System.String}" />
     public class IssueVoucherRequest : IRequest<IssueVoucherResponse>
     {
+        /// <summary>
+        /// Gets the voucher identifier.
+        /// </summary>
+        /// <value>
+        /// The voucher identifier.
+        /// </value>
         public Guid VoucherId { get; }
 
         /// <summary>
@@ -64,12 +70,21 @@ namespace VoucherManagement.BusinessLogic.Requests
         public String RecipientMobile { get; }
 
         /// <summary>
+        /// Gets or sets the issue date time.
+        /// </summary>
+        /// <value>
+        /// The issue date time.
+        /// </value>
+        public DateTime IssuedDateTime { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IssueVoucherRequest" /> class.
         /// </summary>
         /// <param name="voucherId">The voucher identifier.</param>
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="transactionId">The transaction identifier.</param>
+        /// <param name="issuedDateTime">The issued date time.</param>
         /// <param name="value">The value.</param>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
@@ -77,6 +92,7 @@ namespace VoucherManagement.BusinessLogic.Requests
                                     String operatorIdentifier,
                                     Guid estateId,
                                     Guid transactionId,
+                                    DateTime issuedDateTime,
                                     Decimal value,
                                     String recipientEmail,
                                     String recipientMobile)
@@ -88,6 +104,7 @@ namespace VoucherManagement.BusinessLogic.Requests
             this.Value = value;
             this.RecipientEmail = recipientEmail;
             this.RecipientMobile = recipientMobile;
+            this.IssuedDateTime = issuedDateTime;
         }
 
         /// <summary>
@@ -97,6 +114,7 @@ namespace VoucherManagement.BusinessLogic.Requests
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="transactionId">The transaction identifier.</param>
+        /// <param name="issuedDateTime">The issued date time.</param>
         /// <param name="value">The value.</param>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
@@ -105,11 +123,12 @@ namespace VoucherManagement.BusinessLogic.Requests
                                                  String operatorIdentifier,
                                                  Guid estateId,
                                                  Guid transactionId,
+                                                 DateTime issuedDateTime,
                                                  Decimal value,
                                                  String recipientEmail,
                                                  String recipientMobile)
         {
-            return new IssueVoucherRequest(voucherId, operatorIdentifier, estateId,transactionId,value, recipientEmail, recipientMobile);
+            return new IssueVoucherRequest(voucherId, operatorIdentifier, estateId,transactionId, issuedDateTime, value, recipientEmail, recipientMobile);
         }
     }
 }

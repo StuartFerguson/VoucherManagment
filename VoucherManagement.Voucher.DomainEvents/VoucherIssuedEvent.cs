@@ -52,19 +52,30 @@ namespace VoucherManagement.Voucher.DomainEvents
         public String RecipientMobile { get; private set; }
 
         /// <summary>
+        /// Gets the generated date time.
+        /// </summary>
+        /// <value>
+        /// The generated date time.
+        /// </value>
+        [JsonProperty]
+        public DateTime IssuedDateTime { get; private set; }
+
+        /// <summary>
         /// Creates the specified aggregate identifier.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
+        /// <param name="issuedDateTime">The issued date time.</param>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
         /// <returns></returns>
         public static VoucherIssuedEvent Create(Guid aggregateId,
                                                 Guid estateId,
+                                                DateTime issuedDateTime,
                                                 String recipientEmail,
                                                 String recipientMobile)
         {
-            return new VoucherIssuedEvent(aggregateId, Guid.NewGuid(), estateId, recipientEmail, recipientMobile);
+            return new VoucherIssuedEvent(aggregateId, Guid.NewGuid(), estateId, issuedDateTime, recipientEmail, recipientMobile);
         }
 
         /// <summary>
@@ -77,21 +88,24 @@ namespace VoucherManagement.Voucher.DomainEvents
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherIssuedEvent"/> class.
+        /// Initializes a new instance of the <see cref="VoucherIssuedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
+        /// <param name="issuedDateTime">The issued date time.</param>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
         private VoucherIssuedEvent(Guid aggregateId,
                                       Guid eventId,
                                       Guid estateId,
+                                      DateTime issuedDateTime,
                                       String recipientEmail,
                                       String recipientMobile) : base(aggregateId, eventId)
         {
             this.EstateId = estateId;
             this.VoucherId = aggregateId;
+            this.IssuedDateTime = issuedDateTime;
             this.RecipientEmail = recipientEmail;
             this.RecipientMobile = recipientMobile;
         }

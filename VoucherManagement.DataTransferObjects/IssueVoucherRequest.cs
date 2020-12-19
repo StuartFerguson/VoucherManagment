@@ -61,5 +61,14 @@
         /// </value>
         [JsonProperty("recipient_mobile")]
         public String RecipientMobile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the issued date time.
+        /// </summary>
+        /// <value>
+        /// The issued date time.
+        /// </value>
+        [JsonProperty("issued_date_time")]
+        public DateTime? IssuedDateTime { get; set; }
     }
 }

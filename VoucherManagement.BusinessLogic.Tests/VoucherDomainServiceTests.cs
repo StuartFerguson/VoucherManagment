@@ -41,7 +41,8 @@ namespace VoucherManagement.BusinessLogic.Tests
             
 
             IssueVoucherResponse issueVoucherResponse = await domainService.IssueVoucher(TestData.VoucherId, TestData.OperatorIdentifier,
-                                                                                         TestData.EstateId, TestData.Value,
+                                                                                         TestData.EstateId, TestData.TransactionId,
+                                                                                         TestData.IssuedDateTime, TestData.Value,
                                                                                          TestData.RecipientEmail,TestData.RecipientMobile,
                                                                                          CancellationToken.None);
 
@@ -70,8 +71,8 @@ namespace VoucherManagement.BusinessLogic.Tests
                                             {
                                                 await domainService.IssueVoucher(TestData.VoucherId,
                                                                                  TestData.OperatorIdentifier,
-                                                                                 TestData.EstateId,
-                                                                                 TestData.Value,
+                                                                                 TestData.EstateId, TestData.TransactionId,
+                                                                                 TestData.IssuedDateTime, TestData.Value,
                                                                                  TestData.RecipientEmail,
                                                                                  TestData.RecipientMobile,
                                                                                  CancellationToken.None);
@@ -101,8 +102,8 @@ namespace VoucherManagement.BusinessLogic.Tests
             {
                 await domainService.IssueVoucher(TestData.VoucherId,
                                                  TestData.OperatorIdentifier,
-                                                 TestData.EstateId,
-                                                 TestData.Value,
+                                                 TestData.EstateId, TestData.TransactionId,
+                                                 TestData.IssuedDateTime, TestData.Value,
                                                  TestData.RecipientEmail,
                                                  TestData.RecipientMobile,
                                                  CancellationToken.None);
@@ -132,8 +133,8 @@ namespace VoucherManagement.BusinessLogic.Tests
             {
                 await domainService.IssueVoucher(TestData.VoucherId,
                                                  TestData.OperatorIdentifier,
-                                                 TestData.EstateId,
-                                                 TestData.Value,
+                                                 TestData.EstateId, TestData.TransactionId,
+                                                 TestData.IssuedDateTime, TestData.Value,
                                                  TestData.RecipientEmail,
                                                  TestData.RecipientMobile,
                                                  CancellationToken.None);
@@ -163,8 +164,8 @@ namespace VoucherManagement.BusinessLogic.Tests
             {
                 await domainService.IssueVoucher(TestData.VoucherId,
                                                  TestData.OperatorIdentifier,
-                                                 TestData.EstateId,
-                                                 TestData.Value,
+                                                 TestData.EstateId, TestData.TransactionId,
+                                                 TestData.IssuedDateTime, TestData.Value,
                                                  TestData.RecipientEmail,
                                                  TestData.RecipientMobile,
                                                  CancellationToken.None);

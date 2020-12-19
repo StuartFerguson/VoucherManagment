@@ -23,6 +23,15 @@ namespace VoucherManagement.Voucher.DomainEvents
         public Guid EstateId { get; private set; }
 
         /// <summary>
+        /// Gets the transaction identifier.
+        /// </summary>
+        /// <value>
+        /// The transaction identifier.
+        /// </value>
+        [JsonProperty]
+        public Guid TransactionId { get; private set; }
+
+        /// <summary>
         /// Gets the voucher identifier.
         /// </summary>
         /// <value>
@@ -68,6 +77,15 @@ namespace VoucherManagement.Voucher.DomainEvents
         public DateTime ExpiryDateTime { get; private set; }
 
         /// <summary>
+        /// Gets the generated date time.
+        /// </summary>
+        /// <value>
+        /// The generated date time.
+        /// </value>
+        [JsonProperty]
+        public DateTime GeneratedDateTime { get; private set; }
+
+        /// <summary>
         /// Gets the message.
         /// </summary>
         /// <value>
@@ -81,6 +99,8 @@ namespace VoucherManagement.Voucher.DomainEvents
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
+        /// <param name="transactionId">The transaction identifier.</param>
+        /// <param name="generatedDateTime">The generated date time.</param>
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="value">The value.</param>
         /// <param name="voucherCode">The voucher code.</param>
@@ -89,13 +109,15 @@ namespace VoucherManagement.Voucher.DomainEvents
         /// <returns></returns>
         public static VoucherGeneratedEvent Create(Guid aggregateId,
                                                    Guid estateId,
+                                                   Guid transactionId,
+                                                   DateTime generatedDateTime,
                                                    String operatorIdentifier,
                                                    Decimal value,
                                                    String voucherCode,
                                                    DateTime expiryDateTime,
                                                    String message)
         {
-            return new VoucherGeneratedEvent(aggregateId,Guid.NewGuid(), estateId,operatorIdentifier,value,voucherCode, expiryDateTime, message);
+            return new VoucherGeneratedEvent(aggregateId,Guid.NewGuid(), estateId, transactionId, generatedDateTime, operatorIdentifier,value,voucherCode, expiryDateTime, message);
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="VoucherGeneratedEvent"/> class.
@@ -107,11 +129,13 @@ namespace VoucherManagement.Voucher.DomainEvents
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherGeneratedEvent"/> class.
+        /// Initializes a new instance of the <see cref="VoucherGeneratedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
+        /// <param name="generatedDateTime">The generated date time.</param>
+        /// <param name="transactionId">The transaction identifier.</param>
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="value">The value.</param>
         /// <param name="voucherCode">The voucher code.</param>
@@ -120,6 +144,8 @@ namespace VoucherManagement.Voucher.DomainEvents
         private VoucherGeneratedEvent(Guid aggregateId,
                                       Guid eventId,
                                       Guid estateId,
+                                      Guid transactionId,
+                                      DateTime generatedDateTime,
                                       String operatorIdentifier,
                                       Decimal value,
                                       String voucherCode,
@@ -127,6 +153,8 @@ namespace VoucherManagement.Voucher.DomainEvents
             String message) :base(aggregateId, eventId)
         {
             this.EstateId = estateId;
+            this.TransactionId = transactionId;
+            this.GeneratedDateTime = generatedDateTime;
             this.OperatorIdentifier = operatorIdentifier;
             this.Value = value;
             this.VoucherCode = voucherCode;

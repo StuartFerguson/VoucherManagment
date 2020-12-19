@@ -16,6 +16,7 @@ namespace VoucherManagement.BusinessLogic.Tests
                                                                                  TestData.OperatorIdentifier,
                                                                                  TestData.EstateId,
                                                                                  TestData.TransactionId,
+                                                                                 TestData.IssuedDateTime,
                                                                                  TestData.Value,
                                                                                  TestData.RecipientEmail,
                                                                                  TestData.RecipientMobile);
@@ -28,6 +29,7 @@ namespace VoucherManagement.BusinessLogic.Tests
             issueVoucherRequest.Value.ShouldBe(TestData.Value);
             issueVoucherRequest.RecipientEmail.ShouldBe(TestData.RecipientEmail);
             issueVoucherRequest.RecipientMobile.ShouldBe(TestData.RecipientMobile);
+            issueVoucherRequest.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
         }
     }
 }

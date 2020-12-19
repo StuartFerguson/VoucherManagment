@@ -14,7 +14,9 @@ namespace VoucherManagement.VoucherAggregate.Tests
         [Fact]
         public void VoucherGeneratedEvent_CanBeCreated_IsCreated()
         {
-            VoucherGeneratedEvent voucherGeneratedEvent = VoucherGeneratedEvent.Create(TestData.VoucherId,TestData.EstateId,TestData.OperatorIdentifier,
+            VoucherGeneratedEvent voucherGeneratedEvent = VoucherGeneratedEvent.Create(TestData.VoucherId,TestData.EstateId,
+                                                                                       TestData.TransactionId, TestData.IssuedDateTime,
+                                                                                       TestData.OperatorIdentifier,
                                                                                        TestData.Value, TestData.VoucherCode,TestData.ExpiryDate,
                                                                                        TestData.Message);
 
@@ -29,12 +31,13 @@ namespace VoucherManagement.VoucherAggregate.Tests
             voucherGeneratedEvent.VoucherCode.ShouldBe(TestData.VoucherCode);
             voucherGeneratedEvent.ExpiryDateTime.ShouldBe(TestData.ExpiryDate);
             voucherGeneratedEvent.Message.ShouldBe(TestData.Message);
+            voucherGeneratedEvent.GeneratedDateTime.ShouldBe(TestData.IssuedDateTime);
         }
 
         [Fact]
         public void VoucherIssuedEvent_CanBeCreated_IsCreated()
         {
-            VoucherIssuedEvent voucherIssuedEvent = VoucherIssuedEvent.Create(TestData.VoucherId, TestData.EstateId,TestData.RecipientEmail,TestData.RecipientMobile);
+            VoucherIssuedEvent voucherIssuedEvent = VoucherIssuedEvent.Create(TestData.VoucherId, TestData.EstateId, TestData.IssuedDateTime, TestData.RecipientEmail,TestData.RecipientMobile);
 
             voucherIssuedEvent.ShouldNotBeNull();
             voucherIssuedEvent.AggregateId.ShouldBe(TestData.VoucherId);
@@ -44,6 +47,7 @@ namespace VoucherManagement.VoucherAggregate.Tests
             voucherIssuedEvent.EstateId.ShouldBe(TestData.EstateId);
             voucherIssuedEvent.RecipientEmail.ShouldBe(TestData.RecipientEmail);
             voucherIssuedEvent.RecipientMobile.ShouldBe(TestData.RecipientMobile);
+            voucherIssuedEvent.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
         }
     }
 }
