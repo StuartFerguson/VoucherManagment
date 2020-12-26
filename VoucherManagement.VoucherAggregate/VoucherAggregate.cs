@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using Microsoft.AspNetCore.Identity;
     using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EventStore.EventStore;
     using Shared.General;
@@ -20,6 +19,8 @@
         /// The random
         /// </summary>
         private static readonly Random _random = new Random();
+
+        private static readonly Random rdm = new Random();
 
         #endregion
 
@@ -47,6 +48,14 @@
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the barcode.
+        /// </summary>
+        /// <value>
+        /// The barcode.
+        /// </value>
+        public String Barcode { get; private set; }
 
         /// <summary>
         /// Gets the estate identifier.
@@ -89,20 +98,20 @@
         public DateTime IssuedDateTime { get; private set; }
 
         /// <summary>
-        /// Gets the transaction identifier.
-        /// </summary>
-        /// <value>
-        /// The transaction identifier.
-        /// </value>
-        public Guid TransactionId { get; private set; }
-
-        /// <summary>
         /// Gets the message.
         /// </summary>
         /// <value>
         /// The message.
         /// </value>
         public String Message { get; private set; }
+
+        /// <summary>
+        /// Gets the transaction identifier.
+        /// </summary>
+        /// <value>
+        /// The transaction identifier.
+        /// </value>
+        public Guid TransactionId { get; private set; }
 
         /// <summary>
         /// Gets the voucher code.
@@ -115,6 +124,22 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Adds the barcode.
+        /// </summary>
+        /// <param name="barcodeAsBase64">The barcode as base64.</param>
+        public void AddBarcode(String barcodeAsBase64)
+        {
+            Guard.ThrowIfNullOrEmpty(barcodeAsBase64, nameof(barcodeAsBase64));
+
+            this.CheckIfVoucherHasBeenGenerated();
+            this.CheckIfVoucherAlreadyIssued();
+
+            BarcodeAddedEvent barcodeAddedEvent = BarcodeAddedEvent.Create(this.AggregateId, this.EstateId, barcodeAsBase64);
+
+            this.ApplyAndPend(barcodeAddedEvent);
+        }
 
         /// <summary>
         /// Creates the specified aggregate identifier.
@@ -170,7 +195,7 @@
         {
             this.CheckIfVoucherHasBeenGenerated();
 
-            if (String.IsNullOrEmpty(recipientEmail) && String.IsNullOrEmpty(recipientMobile))
+            if (string.IsNullOrEmpty(recipientEmail) && string.IsNullOrEmpty(recipientMobile))
             {
                 throw new ArgumentNullException(message:"Either Recipient Email Address or Recipient Mobile number must be set to issue a voucher", innerException:null);
             }
@@ -227,7 +252,7 @@
                 throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has already been issued");
             }
         }
-
+        
         /// <summary>
         /// Checks if voucher has been generated.
         /// </summary>
@@ -245,24 +270,15 @@
         /// </summary>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        private String GenerateVoucherCode(Int32 length = 8)
+        private String GenerateVoucherCode(Int32 length = 10)
         {
             // validate length to be greater than 0
-            Char[] pw = new Char[length];
-            for (Int32 i = 0; i < length; ++i)
-            {
-                Int32 isAlpha = VoucherAggregate._random.Next(2);
-                if (isAlpha == 0)
-                {
-                    pw[i] = (Char)(VoucherAggregate._random.Next(10) + '0');
-                }
-                else
-                {
-                    pw[i] = (Char)(VoucherAggregate._random.Next(26) + 'A');
-                }
-            }
+            if (length <= 1) length = 10;
 
-            return new String(pw);
+            Int32 min = (Int32)Math.Pow(10, length - 1);
+            Int32 max = (Int32)Math.Pow(10, length) - 1;
+
+            return VoucherAggregate.rdm.Next(min, max).ToString();
         }
 
         /// <summary>
@@ -287,6 +303,15 @@
         private void PlayEvent(VoucherIssuedEvent domainEvent)
         {
             this.IsIssued = true;
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(BarcodeAddedEvent domainEvent)
+        {
+            this.Barcode = domainEvent.Barcode;
         }
 
         #endregion

@@ -141,5 +141,40 @@ namespace VoucherManagment.VoucherAggregate.Tests
                                                     aggregate.Issue(recipientEmail,recipientMobile);
                                                 });
         }
+
+        [Fact]
+        public void VoucherAggregate_AddBarcode_BarcodeIsAdded()
+        {
+            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+            aggregate.AddBarcode(TestData.Barcode);
+
+            aggregate.Barcode.ShouldBe(TestData.Barcode);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void VoucherAggregate_AddBarcode_InvalidBarcode_ErrorThrown(String barcode)
+        {
+            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+
+            Should.Throw<ArgumentException>(() =>
+            {
+                aggregate.AddBarcode(barcode);
+            });
+        }
+
+        [Fact]
+        public void VoucherAggregate_AddBarcode_VoucherNotGenerated_ErrorThrown()
+        {
+            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
+            
+            Should.Throw<InvalidOperationException>(() =>
+                                            {
+                                                aggregate.AddBarcode(TestData.Barcode);
+                                            });
+        }
     }
 }

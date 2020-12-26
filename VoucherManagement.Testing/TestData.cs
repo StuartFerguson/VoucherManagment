@@ -111,6 +111,8 @@ namespace VoucherManagement.Testing
                                                                                            TestData.RecipientEmail,
                                                                                            TestData.RecipientMobile);
 
+        public static String Barcode = "1234567890";
+
         public static IssueVoucherResponse IssueVoucherResponse =>
             new IssueVoucherResponse
             {

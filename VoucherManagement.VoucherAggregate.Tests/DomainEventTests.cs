@@ -49,5 +49,19 @@ namespace VoucherManagement.VoucherAggregate.Tests
             voucherIssuedEvent.RecipientMobile.ShouldBe(TestData.RecipientMobile);
             voucherIssuedEvent.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
         }
+
+        [Fact]
+        public void BarcodeAddedEvent_CanBeCreated_IsCreated()
+        {
+            BarcodeAddedEvent barcodeAddedEvent = BarcodeAddedEvent.Create(TestData.VoucherId, TestData.EstateId, TestData.Barcode);
+
+            barcodeAddedEvent.ShouldNotBeNull();
+            barcodeAddedEvent.AggregateId.ShouldBe(TestData.VoucherId);
+            barcodeAddedEvent.EventCreatedDateTime.ShouldNotBe(DateTime.MinValue);
+            barcodeAddedEvent.EventId.ShouldNotBe(Guid.Empty);
+            barcodeAddedEvent.VoucherId.ShouldBe(TestData.VoucherId);
+            barcodeAddedEvent.EstateId.ShouldBe(TestData.EstateId);
+            barcodeAddedEvent.Barcode.ShouldBe(TestData.Barcode);
+        }
     }
 }

@@ -9,6 +9,7 @@
     using EstateManagement.Client;
     using EstateManagement.DataTransferObjects.Responses;
     using Models;
+    using NetBarcode;
     using SecurityService.Client;
     using SecurityService.DataTransferObjects.Responses;
     using Shared.EventStore.EventStore;
@@ -73,6 +74,10 @@
             VoucherAggregate voucher = await this.VoucherAggregateRepository.GetLatestVersion(voucherId, cancellationToken);
 
             voucher.Generate(operatorId,estateId,transactionId, issuedDateTime, value);
+            
+            // Generate the barcode
+            Barcode barcode = new Barcode(voucher.VoucherCode);
+            voucher.AddBarcode(barcode.GetBase64Image());
             voucher.Issue(recipientEmail,recipientMobile);
 
             await this.VoucherAggregateRepository.SaveChanges(voucher, cancellationToken);
