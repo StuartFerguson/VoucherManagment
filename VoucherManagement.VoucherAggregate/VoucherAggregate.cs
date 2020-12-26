@@ -134,7 +134,7 @@
             Guard.ThrowIfNullOrEmpty(barcodeAsBase64, nameof(barcodeAsBase64));
 
             this.CheckIfVoucherHasBeenGenerated();
-            this.CheckIfVoucherHasBeenIssued();
+            this.CheckIfVoucherAlreadyIssued();
 
             BarcodeAddedEvent barcodeAddedEvent = BarcodeAddedEvent.Create(this.AggregateId, this.EstateId, barcodeAsBase64);
 
@@ -252,19 +252,7 @@
                 throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has already been issued");
             }
         }
-
-        /// <summary>
-        /// Checks if voucher has been issued.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Voucher Id [{this.AggregateId}] has not been issued</exception>
-        private void CheckIfVoucherHasBeenIssued()
-        {
-            if (this.IsIssued == false)
-            {
-                throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has not been issued");
-            }
-        }
-
+        
         /// <summary>
         /// Checks if voucher has been generated.
         /// </summary>

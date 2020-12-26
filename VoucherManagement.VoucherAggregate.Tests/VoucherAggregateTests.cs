@@ -147,7 +147,6 @@ namespace VoucherManagment.VoucherAggregate.Tests
         {
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
-            aggregate.Issue(TestData.RecipientEmail, TestData.RecipientMobile);
             aggregate.AddBarcode(TestData.Barcode);
 
             aggregate.Barcode.ShouldBe(TestData.Barcode);
@@ -160,17 +159,15 @@ namespace VoucherManagment.VoucherAggregate.Tests
         {
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
-            aggregate.Issue(TestData.RecipientEmail, TestData.RecipientMobile);
+
             Should.Throw<ArgumentException>(() =>
             {
                 aggregate.AddBarcode(barcode);
             });
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void VoucherAggregate_AddBarcode_VoucherNotGenerated_ErrorThrown(String barcode)
+        [Fact]
+        public void VoucherAggregate_AddBarcode_VoucherNotGenerated_ErrorThrown()
         {
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             
@@ -178,20 +175,6 @@ namespace VoucherManagment.VoucherAggregate.Tests
                                             {
                                                 aggregate.AddBarcode(TestData.Barcode);
                                             });
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void VoucherAggregate_AddBarcode_VoucherNotIssued_ErrorThrown(String barcode)
-        {
-            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
-            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
-            
-            Should.Throw<InvalidOperationException>(() =>
-                                                    {
-                                                        aggregate.AddBarcode(TestData.Barcode);
-                                                    });
         }
     }
 }
