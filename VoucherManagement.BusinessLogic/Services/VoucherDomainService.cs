@@ -74,9 +74,11 @@
             VoucherAggregate voucher = await this.VoucherAggregateRepository.GetLatestVersion(voucherId, cancellationToken);
 
             voucher.Generate(operatorId,estateId,transactionId, issuedDateTime, value);
-            
+
+            var voucherModel = voucher.GetVoucher();
+
             // Generate the barcode
-            Barcode barcode = new Barcode(voucher.VoucherCode);
+            Barcode barcode = new Barcode(voucherModel.VoucherCode);
             voucher.AddBarcode(barcode.GetBase64Image());
             voucher.Issue(recipientEmail,recipientMobile);
 
@@ -84,9 +86,9 @@
 
             return new IssueVoucherResponse
                    {
-                       ExpiryDate = voucher.ExpiryDate,
-                       Message = voucher.Message,
-                       VoucherCode = voucher.VoucherCode,
+                       ExpiryDate = voucherModel.ExpiryDate,
+                       Message = voucherModel.Message,
+                       VoucherCode = voucherModel.VoucherCode,
                        VoucherId = voucherId
                    };
         }

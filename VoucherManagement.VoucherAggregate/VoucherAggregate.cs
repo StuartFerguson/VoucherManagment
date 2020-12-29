@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Models;
     using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EventStore.EventStore;
     using Shared.General;
@@ -20,7 +21,100 @@
         /// </summary>
         private static readonly Random _random = new Random();
 
+        /// <summary>
+        /// Gets the barcode.
+        /// </summary>
+        /// <value>
+        /// The barcode.
+        /// </value>
+        private String Barcode;
+
+        /// <summary>
+        /// Gets the estate identifier.
+        /// </summary>
+        /// <value>
+        /// The estate identifier.
+        /// </value>
+        private Guid EstateId;
+
+        /// <summary>
+        /// Gets the expiry date.
+        /// </summary>
+        /// <value>
+        /// The expiry date.
+        /// </value>
+        private DateTime ExpiryDate;
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is generated.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is generated; otherwise, <c>false</c>.
+        /// </value>
+        private Boolean IsGenerated;
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is issued.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is issued; otherwise, <c>false</c>.
+        /// </value>
+        private Boolean IsIssued;
+
+        /// <summary>
+        /// Gets the issued date time.
+        /// </summary>
+        /// <value>
+        /// The issued date time.
+        /// </value>
+        private DateTime IssuedDateTime;
+
+        /// <summary>
+        /// Gets the message.
+        /// </summary>
+        /// <value>
+        /// The message.
+        /// </value>
+        private String Message;
+
+        /// <summary>
+        /// The RDM
+        /// </summary>
         private static readonly Random rdm = new Random();
+
+        /// <summary>
+        /// The recipient email
+        /// </summary>
+        private String RecipientEmail;
+
+        /// <summary>
+        /// The recipient mobile
+        /// </summary>
+        private String RecipientMobile;
+
+        /// <summary>
+        /// Gets the transaction identifier.
+        /// </summary>
+        /// <value>
+        /// The transaction identifier.
+        /// </value>
+        private Guid TransactionId;
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
+        private Decimal Value;
+
+        /// <summary>
+        /// Gets the voucher code.
+        /// </summary>
+        /// <value>
+        /// The voucher code.
+        /// </value>
+        private String VoucherCode;
 
         #endregion
 
@@ -44,82 +138,6 @@
 
             this.AggregateId = aggregateId;
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the barcode.
-        /// </summary>
-        /// <value>
-        /// The barcode.
-        /// </value>
-        public String Barcode { get; private set; }
-
-        /// <summary>
-        /// Gets the estate identifier.
-        /// </summary>
-        /// <value>
-        /// The estate identifier.
-        /// </value>
-        public Guid EstateId { get; private set; }
-
-        /// <summary>
-        /// Gets the expiry date.
-        /// </summary>
-        /// <value>
-        /// The expiry date.
-        /// </value>
-        public DateTime ExpiryDate { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is generated.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is generated; otherwise, <c>false</c>.
-        /// </value>
-        public Boolean IsGenerated { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is issued.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is issued; otherwise, <c>false</c>.
-        /// </value>
-        public Boolean IsIssued { get; private set; }
-
-        /// <summary>
-        /// Gets the issued date time.
-        /// </summary>
-        /// <value>
-        /// The issued date time.
-        /// </value>
-        public DateTime IssuedDateTime { get; private set; }
-
-        /// <summary>
-        /// Gets the message.
-        /// </summary>
-        /// <value>
-        /// The message.
-        /// </value>
-        public String Message { get; private set; }
-
-        /// <summary>
-        /// Gets the transaction identifier.
-        /// </summary>
-        /// <value>
-        /// The transaction identifier.
-        /// </value>
-        public Guid TransactionId { get; private set; }
-
-        /// <summary>
-        /// Gets the voucher code.
-        /// </summary>
-        /// <value>
-        /// The voucher code.
-        /// </value>
-        public String VoucherCode { get; private set; }
 
         #endregion
 
@@ -182,6 +200,29 @@
                 VoucherGeneratedEvent.Create(this.AggregateId, estateId, transactionId, issuedDateTime, operatorIdentifier, value, voucherCode, expiryDateTime, message);
 
             this.ApplyAndPend(voucherGeneratedEvent);
+        }
+
+        /// <summary>
+        /// Gets the voucher.
+        /// </summary>
+        /// <returns></returns>
+        public Voucher GetVoucher()
+        {
+            return new Voucher
+                   {
+                       EstateId = this.EstateId,
+                       Value = this.Value,
+                       IssuedDateTime = this.IssuedDateTime,
+                       TransactionId = this.TransactionId,
+                       ExpiryDate = this.ExpiryDate,
+                       IsIssued = this.IsIssued,
+                       Barcode = this.Barcode,
+                       Message = this.Message,
+                       VoucherCode = this.VoucherCode,
+                       IsGenerated = this.IsGenerated,
+                       RecipientEmail = this.RecipientEmail,
+                       RecipientMobile = this.RecipientMobile
+                   };
         }
 
         /// <summary>
@@ -252,7 +293,7 @@
                 throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has already been issued");
             }
         }
-        
+
         /// <summary>
         /// Checks if voucher has been generated.
         /// </summary>
@@ -294,6 +335,7 @@
             this.VoucherCode = domainEvent.VoucherCode;
             this.Message = domainEvent.Message;
             this.TransactionId = domainEvent.TransactionId;
+            this.Value = domainEvent.Value;
         }
 
         /// <summary>
@@ -303,6 +345,8 @@
         private void PlayEvent(VoucherIssuedEvent domainEvent)
         {
             this.IsIssued = true;
+            this.RecipientEmail = domainEvent.RecipientEmail;
+            this.RecipientMobile = domainEvent.RecipientMobile;
         }
 
         /// <summary>

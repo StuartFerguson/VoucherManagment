@@ -24,12 +24,14 @@ namespace VoucherManagment.VoucherAggregate.Tests
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
 
-            aggregate.IsGenerated.ShouldBeTrue();
-            aggregate.EstateId.ShouldBe(TestData.EstateId);
-            aggregate.IsIssued.ShouldBeFalse();
-            aggregate.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
-            aggregate.VoucherCode.ShouldNotBeNullOrEmpty();
-            aggregate.TransactionId.ShouldBe(TestData.TransactionId);
+            var voucher = aggregate.GetVoucher();
+
+            voucher.IsGenerated.ShouldBeTrue();
+            voucher.EstateId.ShouldBe(TestData.EstateId);
+            voucher.IsIssued.ShouldBeFalse();
+            voucher.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
+            voucher.VoucherCode.ShouldNotBeNullOrEmpty();
+            voucher.TransactionId.ShouldBe(TestData.TransactionId);
         }
 
         [Fact]
@@ -100,8 +102,8 @@ namespace VoucherManagment.VoucherAggregate.Tests
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
             aggregate.Issue(TestData.RecipientEmail, TestData.RecipientMobile);
-
-            aggregate.IsIssued.ShouldBeTrue();
+            var voucher = aggregate.GetVoucher();
+            voucher.IsIssued.ShouldBeTrue();
         }
 
         [Fact]
@@ -148,8 +150,8 @@ namespace VoucherManagment.VoucherAggregate.Tests
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
             aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
             aggregate.AddBarcode(TestData.Barcode);
-
-            aggregate.Barcode.ShouldBe(TestData.Barcode);
+            var voucher = aggregate.GetVoucher();
+            voucher.Barcode.ShouldBe(TestData.Barcode);
         }
 
         [Theory]

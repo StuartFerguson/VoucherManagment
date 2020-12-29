@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VoucherManagement.Models\VoucherManagement.Models.csproj" />
     <ProjectReference Include="..\VoucherManagement.Voucher.DomainEvents\VoucherManagement.Voucher.DomainEvents.csproj" />
   </ItemGroup>
 

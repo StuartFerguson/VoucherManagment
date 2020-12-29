@@ -8,6 +8,8 @@ namespace VoucherManagement.Testing
     using EstateManagement.DataTransferObjects.Responses;
     using Models;
     using SecurityService.DataTransferObjects.Responses;
+    using Voucher.DomainEvents;
+    using VoucherAggregate;
 
     public static class TestData
     {
@@ -113,6 +115,14 @@ namespace VoucherManagement.Testing
 
         public static String Barcode = "1234567890";
 
+        public static VoucherIssuedEvent VoucherIssuedEvent = VoucherIssuedEvent.Create(TestData.VoucherId,
+                                                                                        TestData.EstateId,
+                                                                                        TestData.IssuedDateTime,
+                                                                                        TestData.RecipientEmail,
+                                                                                        TestData.RecipientMobile);
+
+        public static Guid ContractId = Guid.Parse("6F5C4480-7195-4CA0-870E-74851838716F");
+
         public static IssueVoucherResponse IssueVoucherResponse =>
             new IssueVoucherResponse
             {
@@ -122,5 +132,24 @@ namespace VoucherManagement.Testing
                 VoucherId = TestData.VoucherId
             };
 
+        public static VoucherAggregate GetVoucherAggregateWithRecipientEmail()
+        {
+            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+            aggregate.AddBarcode(TestData.Barcode);
+            aggregate.Issue(TestData.RecipientEmail, null);
+
+            return aggregate;
+        }
+
+        public static VoucherAggregate GetVoucherAggregateWithRecipientMobile()
+        {
+            VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+            aggregate.AddBarcode(TestData.Barcode);
+            aggregate.Issue(null, TestData.RecipientMobile);
+
+            return aggregate;
+        }
     }
 }
