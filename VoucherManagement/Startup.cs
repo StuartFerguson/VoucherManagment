@@ -14,17 +14,22 @@ namespace VoucherManagement
 {
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.IO.Abstractions;
     using System.Net.Http;
     using System.Reflection;
     using System.Xml;
+    using BusinessLogic;
+    using BusinessLogic.EventHandling;
     using BusinessLogic.RequestHandlers;
     using BusinessLogic.Requests;
     using BusinessLogic.Services;
     using Common;
     using EstateManagement.Client;
+    using EstateReporting.Database;
     using EventStore.Client;
     using HealthChecks.UI.Client;
     using MediatR;
+    using MessagingService.Client;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -37,6 +42,7 @@ namespace VoucherManagement
     using Newtonsoft.Json.Serialization;
     using NLog.Extensions.Logging;
     using SecurityService.Client;
+    using Shared.EntityFramework;
     using Shared.EntityFramework.ConnectionStringConfiguration;
     using Shared.EventStore.EventStore;
     using Shared.Extensions;
@@ -112,9 +118,12 @@ namespace VoucherManagement
             }
             else
             {
+                services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
                 services.AddEventStoreClient(Startup.ConfigureEventStoreSettings);
                 services.AddEventStoreProjectionManagerClient(Startup.ConfigureEventStoreSettings);
             }
+
+            services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
 
             services.AddTransient<IEventStoreContext, EventStoreContext>();
             services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate>, AggregateRepository<VoucherAggregate.VoucherAggregate>>();
@@ -129,7 +138,8 @@ namespace VoucherManagement
             services.AddSingleton<HttpClient>();
             services.AddSingleton<IEstateClient, EstateClient>();
             services.AddSingleton<ISecurityServiceClient, SecurityServiceClient>();
-
+            services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddSingleton<IDbContextFactory<EstateReportingContext>, DbContextFactory<EstateReportingContext>>();
             // request & notification handlers
             services.AddTransient<ServiceFactory>(context =>
                                                   {
@@ -137,6 +147,29 @@ namespace VoucherManagement
                                                   });
 
             services.AddSingleton<IRequestHandler<IssueVoucherRequest, IssueVoucherResponse>, VoucherManagementRequestHandler>();
+
+            Dictionary<String, String[]> eventHandlersConfiguration = new Dictionary<String, String[]>();
+
+            if (Startup.Configuration != null)
+            {
+                IConfigurationSection section = Startup.Configuration.GetSection("AppSettings:EventHandlerConfiguration");
+
+                if (section != null)
+                {
+                    Startup.Configuration.GetSection("AppSettings:EventHandlerConfiguration").Bind(eventHandlersConfiguration);
+                }
+            }
+            services.AddSingleton<Dictionary<String, String[]>>(eventHandlersConfiguration);
+
+            services.AddSingleton<Func<Type, IDomainEventHandler>>(container => (type) =>
+                                                                                {
+                                                                                    IDomainEventHandler handler = container.GetService(type) as IDomainEventHandler;
+                                                                                    return handler;
+                                                                                });
+
+            services.AddSingleton<VoucherDomainEventHandler>();
+            services.AddSingleton<IDomainEventHandlerResolver, DomainEventHandlerResolver>();
+            services.AddSingleton<IMessagingServiceClient, MessagingServiceClient>();
         }
 
         private void ConfigureMiddlewareServices(IServiceCollection services)
@@ -147,6 +180,21 @@ namespace VoucherManagement
                                    name: "Eventstore",
                                    failureStatus: HealthStatus.Unhealthy,
                                    tags: new string[] { "db", "eventstore" })
+                    .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
+                                  healthQuery: "SELECT 1;",
+                                  name: "Read Model Server",
+                                  failureStatus: HealthStatus.Degraded,
+                                  tags: new string[] { "db", "sql", "sqlserver" })
+                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "MessagingServiceApi")}/health"),
+                                 name: "Messaging Service",
+                                 httpMethod: HttpMethod.Get,
+                                 failureStatus: HealthStatus.Unhealthy,
+                                 tags: new string[] { "messaging", "email" })
+                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "EstateManagementApi")}/health"),
+                                 name: "Estate Management Service",
+                                 httpMethod: HttpMethod.Get,
+                                 failureStatus: HealthStatus.Unhealthy,
+                                 tags: new string[] { "application", "estatemanagement" })
                     .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
                                  name:"Security Service",
                                  httpMethod:HttpMethod.Get,
