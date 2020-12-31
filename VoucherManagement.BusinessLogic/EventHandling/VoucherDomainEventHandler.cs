@@ -218,7 +218,7 @@
                 SendSMSRequest request = new SendSMSRequest
                                          {
                                              ConnectionIdentifier = domainEvent.EstateId,
-                                             Destination = "07837072305",
+                                             Destination = domainEvent.RecipientMobile,
                                              Message = message,
                                              MessageId = domainEvent.EventId,
                                              Sender = "Your Voucher"
