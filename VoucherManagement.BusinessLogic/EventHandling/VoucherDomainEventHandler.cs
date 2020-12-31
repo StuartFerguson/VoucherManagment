@@ -66,7 +66,7 @@
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherDomainEventHandler"/> class.
+        /// Initializes a new instance of the <see cref="VoucherDomainEventHandler" /> class.
         /// </summary>
         /// <param name="securityServiceClient">The security service client.</param>
         /// <param name="voucherAggregateRepository">The voucher aggregate repository.</param>
@@ -210,6 +210,50 @@
 
                 await this.MessagingServiceClient.SendEmail(this.TokenResponse.AccessToken, request, cancellationToken);
             }
+
+            if (String.IsNullOrEmpty(voucherModel.RecipientMobile) == false)
+            {
+                String message = await this.GetSMSVoucherMessage(voucherModel, cancellationToken);
+
+                SendSMSRequest request = new SendSMSRequest
+                                         {
+                                             ConnectionIdentifier = domainEvent.EstateId,
+                                             Destination = "07837072305",
+                                             Message = message,
+                                             MessageId = domainEvent.EventId,
+                                             Sender = "Your Voucher"
+                                         };
+
+                await this.MessagingServiceClient.SendSMS(this.TokenResponse.AccessToken, request, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Gets the SMS voucher message.
+        /// </summary>
+        /// <param name="voucherModel">The voucher model.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        private async Task<String> GetSMSVoucherMessage(Voucher voucherModel,
+                                                        CancellationToken cancellationToken)
+        {
+            IDirectoryInfo path = this.FileSystem.Directory.GetParent(Assembly.GetExecutingAssembly().Location);
+
+            String fileData = await this.FileSystem.File.ReadAllTextAsync($"{path}/VoucherMessages/VoucherSMS.txt", cancellationToken);
+
+            PropertyInfo[] voucherProperties = voucherModel.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            // Do the replaces for the transaction
+            foreach (PropertyInfo propertyInfo in voucherProperties)
+            {
+                fileData = fileData.Replace($"[{propertyInfo.Name}]", propertyInfo.GetValue(voucherModel)?.ToString());
+            }
+
+            String voucherOperator = await this.GetVoucherOperator(voucherModel, cancellationToken);
+
+            fileData = fileData.Replace("[OperatorIdentifier]", voucherOperator);
+
+            return fileData;
         }
 
         #endregion
