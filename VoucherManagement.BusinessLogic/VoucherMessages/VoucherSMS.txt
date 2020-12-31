@@ -1,0 +1,4 @@
+﻿[OperatorIdentifier] Voucher  
+
+Amount: [Value] 
+Voucher Code: [VoucherCode]
