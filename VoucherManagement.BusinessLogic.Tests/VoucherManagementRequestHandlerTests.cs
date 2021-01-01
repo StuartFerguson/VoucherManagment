@@ -32,5 +32,23 @@ namespace VoucherManagement.BusinessLogic.Tests
                             });
 
         }
+
+        [Fact]
+        public async Task VoucherManagementRequestHandler_RedeemVoucherRequest_IsHandled()
+        {
+            Mock<IVoucherDomainService> voucherDomainService = new Mock<IVoucherDomainService>();
+            voucherDomainService.Setup(v => v.RedeemVoucher(It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<DateTime>(),
+                                                           It.IsAny<CancellationToken>())).ReturnsAsync(TestData.RedeemVoucherResponse);
+
+            VoucherManagementRequestHandler handler = new VoucherManagementRequestHandler(voucherDomainService.Object);
+
+
+            RedeemVoucherRequest command = TestData.RedeemVoucherRequest;
+            Should.NotThrow(async () =>
+                            {
+                                await handler.Handle(command, CancellationToken.None);
+                            });
+
+        }
     }
 }

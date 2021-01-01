@@ -122,7 +122,7 @@
 
             Mock<IAggregateRepository<VoucherAggregate>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate>>();
             voucherAggregateRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                                      .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientEmail);
+                                      .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientMobile);
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
             context.Transactions.Add(new Transaction
@@ -147,7 +147,7 @@
             DirectoryInfo path = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
                                                            {
-                                                               { $"{path}/VoucherMessages/VoucherEmail.html", new MockFileData("Transaction Number: [TransactionNumber]") }
+                                                               { $"{path}/VoucherMessages/VoucherSMS.txt", new MockFileData("Transaction Number: [TransactionNumber]") }
                                                            });
 
             VoucherDomainEventHandler voucherDomainEventHandler = new VoucherDomainEventHandler(securityServiceClient.Object,

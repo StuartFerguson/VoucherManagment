@@ -102,6 +102,8 @@ namespace VoucherManagement.Testing
 
         public static String RecipientMobile = "123456789";
 
+        public static DateTime GeneratedDateTime = new DateTime(2020, 11, 5);
+
         public static DateTime IssuedDateTime = new DateTime(2020, 11, 5);
 
         public static IssueVoucherRequest IssueVoucherRequest = IssueVoucherRequest.Create(TestData.VoucherId,
@@ -123,6 +125,10 @@ namespace VoucherManagement.Testing
 
         public static Guid ContractId = Guid.Parse("6F5C4480-7195-4CA0-870E-74851838716F");
 
+        public static DateTime RedeemedDateTime = new DateTime(2020, 11, 5);
+
+        public static RedeemVoucherRequest RedeemVoucherRequest = RedeemVoucherRequest.Create(TestData.EstateId,TestData.VoucherCode,TestData.RedeemedDateTime);
+
         public static IssueVoucherResponse IssueVoucherResponse =>
             new IssueVoucherResponse
             {
@@ -135,9 +141,9 @@ namespace VoucherManagement.Testing
         public static VoucherAggregate GetVoucherAggregateWithRecipientEmail()
         {
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
-            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.GeneratedDateTime, TestData.Value);
             aggregate.AddBarcode(TestData.Barcode);
-            aggregate.Issue(TestData.RecipientEmail, null);
+            aggregate.Issue(TestData.RecipientEmail, null, TestData.IssuedDateTime);
 
             return aggregate;
         }
@@ -145,11 +151,17 @@ namespace VoucherManagement.Testing
         public static VoucherAggregate GetVoucherAggregateWithRecipientMobile()
         {
             VoucherAggregate aggregate = VoucherAggregate.Create(TestData.VoucherId);
-            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.IssuedDateTime, TestData.Value);
+            aggregate.Generate(TestData.OperatorIdentifier, TestData.EstateId, TestData.TransactionId, TestData.GeneratedDateTime, TestData.Value);
             aggregate.AddBarcode(TestData.Barcode);
-            aggregate.Issue(null, TestData.RecipientMobile);
+            aggregate.Issue(null, TestData.RecipientMobile, TestData.IssuedDateTime);
 
             return aggregate;
         }
+
+        public static RedeemVoucherResponse RedeemVoucherResponse =>
+            new RedeemVoucherResponse
+            {
+                RemainingBalance = 0
+            };
     }
 }
