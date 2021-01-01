@@ -35,6 +35,19 @@
                                                 String recipientMobile,
                                                 CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Redeems the voucher.
+        /// </summary>
+        /// <param name="estateId">The estate identifier.</param>
+        /// <param name="voucherCode">The voucher code.</param>
+        /// <param name="redeemedDateTime">The redeemed date time.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<RedeemVoucherResponse> RedeemVoucher(Guid estateId, 
+                                                  String voucherCode,
+                                                  DateTime redeemedDateTime,
+                                                  CancellationToken cancellationToken);
+
         #endregion
     }
 }

@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-
-namespace VoucherManagement.Controllers
+﻿namespace VoucherManagement.Controllers
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
+    using System.Threading.Tasks;
     using Common;
     using DataTransferObjects;
     using Factories;
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Models;
+    using IssueVoucherResponse = Models.IssueVoucherResponse;
 
     [ExcludeFromCodeCoverage]
     [Route(VoucherController.ControllerRoute)]
@@ -20,26 +20,36 @@ namespace VoucherManagement.Controllers
     [Authorize]
     public class VoucherController : ControllerBase
     {
+        #region Fields
+
         private readonly IMediator Mediator;
 
         private readonly IModelFactory ModelFactory;
 
-        #region Others
+        #endregion
 
-        /// <summary>
-        /// The controller name
-        /// </summary>
-        public const String ControllerName = "vouchers";
+        #region Constructors
 
-        /// <summary>
-        /// The controller route
-        /// </summary>
-        private const String ControllerRoute = "api/" + VoucherController.ControllerName;
+        public VoucherController(IMediator mediator,
+                                 IModelFactory modelFactory)
+        {
+            this.Mediator = mediator;
+            this.ModelFactory = modelFactory;
+        }
 
         #endregion
 
+        #region Methods
+
+        /// <summary>
+        /// Issues the voucher.
+        /// </summary>
+        /// <param name="issueVoucherRequest">The issue voucher request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> IssueVoucher(IssueVoucherRequest issueVoucherRequest,  CancellationToken cancellationToken)
+        public async Task<IActionResult> IssueVoucher(IssueVoucherRequest issueVoucherRequest,
+                                                      CancellationToken cancellationToken)
         {
             // Reject password tokens
             if (ClaimsHelper.IsPasswordToken(this.User))
@@ -59,17 +69,50 @@ namespace VoucherManagement.Controllers
                 issueVoucherRequest.RecipientEmail,
                 issueVoucherRequest.RecipientMobile);
 
-            Models.IssueVoucherResponse response = await this.Mediator.Send(request, cancellationToken);
-            
+            IssueVoucherResponse response = await this.Mediator.Send(request, cancellationToken);
+
             // TODO: Populate the GET route
             return this.Created("", this.ModelFactory.ConvertFrom(response));
         }
 
-        public VoucherController(IMediator mediator,
-                                 IModelFactory modelFactory)
+        /// <summary>
+        /// Redeems the voucher.
+        /// </summary>
+        /// <param name="redeemVoucherRequest">The redeem voucher request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> RedeemVoucher(RedeemVoucherRequest redeemVoucherRequest,
+                                                      CancellationToken cancellationToken)
         {
-            this.Mediator = mediator;
-            this.ModelFactory = modelFactory;
+            // Reject password tokens
+            if (ClaimsHelper.IsPasswordToken(this.User))
+            {
+                return this.Forbid();
+            }
+
+            DateTime redeemedDateTime = redeemVoucherRequest.RedeemedDateTime.HasValue ? redeemVoucherRequest.RedeemedDateTime.Value : DateTime.Now;
+            BusinessLogic.Requests.RedeemVoucherRequest request = BusinessLogic.Requests.RedeemVoucherRequest.Create(redeemVoucherRequest.EstateId, redeemVoucherRequest.VoucherCode, redeemedDateTime);
+
+            RedeemVoucherResponse response = await this.Mediator.Send(request, cancellationToken);
+            
+            return this.Ok();
         }
+
+        #endregion
+
+        #region Others
+
+        /// <summary>
+        /// The controller name
+        /// </summary>
+        public const String ControllerName = "vouchers";
+
+        /// <summary>
+        /// The controller route
+        /// </summary>
+        private const String ControllerRoute = "api/" + VoucherController.ControllerName;
+
+        #endregion
     }
 }

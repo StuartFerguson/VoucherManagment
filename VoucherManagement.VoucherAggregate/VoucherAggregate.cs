@@ -62,12 +62,27 @@
         private Boolean IsIssued;
 
         /// <summary>
+        /// The is redeemed
+        /// </summary>
+        private Boolean IsRedeemed;
+
+        /// <summary>
         /// Gets the issued date time.
         /// </summary>
         /// <value>
         /// The issued date time.
         /// </value>
         private DateTime IssuedDateTime;
+
+        /// <summary>
+        /// The generated date time
+        /// </summary>
+        private DateTime GeneratedDateTime;
+
+        /// <summary>
+        /// The redeemed date time
+        /// </summary>
+        private DateTime RedeemedDateTime;
 
         /// <summary>
         /// Gets the message.
@@ -107,6 +122,11 @@
         /// The value.
         /// </value>
         private Decimal Value;
+
+        /// <summary>
+        /// The balance
+        /// </summary>
+        private Decimal Balance;
 
         /// <summary>
         /// Gets the voucher code.
@@ -175,15 +195,15 @@
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="transactionId">The transaction identifier.</param>
-        /// <param name="issuedDateTime">The issued date time.</param>
+        /// <param name="generatedDateTime">The generated date time.</param>
         /// <param name="value">The value.</param>
         public void Generate(String operatorIdentifier,
                              Guid estateId,
                              Guid transactionId,
-                             DateTime issuedDateTime,
+                             DateTime generatedDateTime,
                              Decimal value)
         {
-            Guard.ThrowIfInvalidDate(issuedDateTime, nameof(issuedDateTime));
+            Guard.ThrowIfInvalidDate(generatedDateTime, nameof(generatedDateTime));
             Guard.ThrowIfNullOrEmpty(operatorIdentifier, nameof(operatorIdentifier));
             Guard.ThrowIfInvalidGuid(transactionId, nameof(transactionId));
             Guard.ThrowIfInvalidGuid(estateId, nameof(estateId));
@@ -193,11 +213,11 @@
 
             // Do the generate process here...
             String voucherCode = this.GenerateVoucherCode();
-            DateTime expiryDateTime = issuedDateTime.AddDays(30); // Default to a 30 day expiry for now...
+            DateTime expiryDateTime = generatedDateTime.AddDays(30); // Default to a 30 day expiry for now...
             String message = string.Empty;
 
             VoucherGeneratedEvent voucherGeneratedEvent =
-                VoucherGeneratedEvent.Create(this.AggregateId, estateId, transactionId, issuedDateTime, operatorIdentifier, value, voucherCode, expiryDateTime, message);
+                VoucherGeneratedEvent.Create(this.AggregateId, estateId, transactionId, generatedDateTime, operatorIdentifier, value, voucherCode, expiryDateTime, message);
 
             this.ApplyAndPend(voucherGeneratedEvent);
         }
@@ -212,16 +232,20 @@
                    {
                        EstateId = this.EstateId,
                        Value = this.Value,
+                       GeneratedDateTime = this.GeneratedDateTime,
                        IssuedDateTime = this.IssuedDateTime,
+                       RedeemedDateTime = this.RedeemedDateTime,
                        TransactionId = this.TransactionId,
                        ExpiryDate = this.ExpiryDate,
                        IsIssued = this.IsIssued,
+                       IsRedeemed = this.IsRedeemed,
                        Barcode = this.Barcode,
                        Message = this.Message,
                        VoucherCode = this.VoucherCode,
                        IsGenerated = this.IsGenerated,
                        RecipientEmail = this.RecipientEmail,
-                       RecipientMobile = this.RecipientMobile
+                       RecipientMobile = this.RecipientMobile,
+                       Balance = this.Balance
                    };
         }
 
@@ -230,22 +254,39 @@
         /// </summary>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
+        /// <param name="issuedDateTime">The issued date time.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void Issue(String recipientEmail,
-                          String recipientMobile)
+                          String recipientMobile,
+                          DateTime issuedDateTime)
         {
             this.CheckIfVoucherHasBeenGenerated();
 
             if (string.IsNullOrEmpty(recipientEmail) && string.IsNullOrEmpty(recipientMobile))
             {
-                throw new ArgumentNullException(message:"Either Recipient Email Address or Recipient Mobile number must be set to issue a voucher", innerException:null);
+                throw new ArgumentNullException(message: "Either Recipient Email Address or Recipient Mobile number must be set to issue a voucher", innerException: null);
             }
 
             this.CheckIfVoucherAlreadyIssued();
 
-            VoucherIssuedEvent voucherIssuedEvent = VoucherIssuedEvent.Create(this.AggregateId, this.EstateId, this.IssuedDateTime, recipientEmail, recipientMobile);
+            VoucherIssuedEvent voucherIssuedEvent = VoucherIssuedEvent.Create(this.AggregateId, this.EstateId, issuedDateTime, recipientEmail, recipientMobile);
 
             this.ApplyAndPend(voucherIssuedEvent);
+        }
+
+        /// <summary>
+        /// Redeems the specified redeemed date time.
+        /// </summary>
+        /// <param name="redeemedDateTime">The redeemed date time.</param>
+        public void Redeem(DateTime redeemedDateTime)
+        {
+            this.CheckIfVoucherHasBeenGenerated();
+            this.CheckIfVoucherHasBeenIssued();
+            this.CheckIfVoucherAlreadyRedeemed();
+
+            VoucherFullyRedeemedEvent voucherFullyRedeemedEvent = VoucherFullyRedeemedEvent.Create(this.AggregateId, this.EstateId, redeemedDateTime);
+
+            this.ApplyAndPend(voucherFullyRedeemedEvent);
         }
 
         /// <summary>
@@ -295,6 +336,18 @@
         }
 
         /// <summary>
+        /// Checks if voucher already redeemed.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Voucher Id [{this.AggregateId}] has already been redeemed</exception>
+        private void CheckIfVoucherAlreadyRedeemed()
+        {
+            if (this.IsRedeemed)
+            {
+                throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has already been redeemed");
+            }
+        }
+
+        /// <summary>
         /// Checks if voucher has been generated.
         /// </summary>
         /// <exception cref="InvalidOperationException">Voucher Id [{this.AggregateId}] has not been generated</exception>
@@ -303,6 +356,18 @@
             if (this.IsGenerated == false)
             {
                 throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has not been generated");
+            }
+        }
+
+        /// <summary>
+        /// Checks if voucher has been issued.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Voucher Id [{this.AggregateId}] has not been issued</exception>
+        private void CheckIfVoucherHasBeenIssued()
+        {
+            if (this.IsIssued == false)
+            {
+                throw new InvalidOperationException($"Voucher Id [{this.AggregateId}] has not been issued");
             }
         }
 
@@ -330,12 +395,13 @@
         {
             this.IsGenerated = true;
             this.EstateId = domainEvent.EstateId;
-            this.IssuedDateTime = domainEvent.GeneratedDateTime;
+            this.GeneratedDateTime = domainEvent.GeneratedDateTime;
             this.ExpiryDate = domainEvent.ExpiryDateTime;
             this.VoucherCode = domainEvent.VoucherCode;
             this.Message = domainEvent.Message;
             this.TransactionId = domainEvent.TransactionId;
             this.Value = domainEvent.Value;
+            this.Balance = 0;
         }
 
         /// <summary>
@@ -345,8 +411,10 @@
         private void PlayEvent(VoucherIssuedEvent domainEvent)
         {
             this.IsIssued = true;
+            this.IssuedDateTime = domainEvent.IssuedDateTime;
             this.RecipientEmail = domainEvent.RecipientEmail;
             this.RecipientMobile = domainEvent.RecipientMobile;
+            this.Balance = this.Value;
         }
 
         /// <summary>
@@ -356,6 +424,17 @@
         private void PlayEvent(BarcodeAddedEvent domainEvent)
         {
             this.Barcode = domainEvent.Barcode;
+        }
+
+        /// <summary>
+        /// Plays the event.
+        /// </summary>
+        /// <param name="domainEvent">The domain event.</param>
+        private void PlayEvent(VoucherFullyRedeemedEvent domainEvent)
+        {
+            this.RedeemedDateTime = domainEvent.RedeemedDateTime;
+            this.IsRedeemed = true;
+            this.Balance = 0;
         }
 
         #endregion

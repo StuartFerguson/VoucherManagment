@@ -31,5 +31,16 @@ namespace VoucherManagement.BusinessLogic.Tests
             issueVoucherRequest.RecipientMobile.ShouldBe(TestData.RecipientMobile);
             issueVoucherRequest.IssuedDateTime.ShouldBe(TestData.IssuedDateTime);
         }
+
+        [Fact]
+        public void RedeemVoucherRequest_CanBeCreated_IsCreated()
+        {
+            RedeemVoucherRequest redeemVoucherRequest = RedeemVoucherRequest.Create(TestData.EstateId,TestData.VoucherCode,TestData.RedeemedDateTime);
+
+            redeemVoucherRequest.ShouldNotBeNull();
+            redeemVoucherRequest.VoucherCode.ShouldBe(TestData.VoucherCode);
+            redeemVoucherRequest.RedeemedDateTime.ShouldBe(TestData.RedeemedDateTime);
+            redeemVoucherRequest.EstateId.ShouldBe(TestData.EstateId);
+        }
     }
 }

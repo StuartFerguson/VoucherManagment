@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Voucher
     {
         #region Properties
@@ -47,12 +50,34 @@
         public Boolean IsIssued { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is redeemed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is redeemed; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean IsRedeemed { get; set; }
+
+        /// <summary>
         /// Gets the issued date time.
         /// </summary>
         /// <value>
         /// The issued date time.
         /// </value>
         public DateTime IssuedDateTime { get; set; }
+        /// <summary>
+        /// Gets or sets the generated date time.
+        /// </summary>
+        /// <value>
+        /// The generated date time.
+        /// </value>
+        public DateTime GeneratedDateTime { get; set; }
+        /// <summary>
+        /// Gets or sets the redeemed date time.
+        /// </summary>
+        /// <value>
+        /// The redeemed date time.
+        /// </value>
+        public DateTime RedeemedDateTime { get; set; }
 
         /// <summary>
         /// Gets the message.
@@ -65,11 +90,17 @@
         /// <summary>
         /// The recipient email
         /// </summary>
+        /// <value>
+        /// The recipient email.
+        /// </value>
         public String RecipientEmail { get; set; }
 
         /// <summary>
         /// The recipient mobile
         /// </summary>
+        /// <value>
+        /// The recipient mobile.
+        /// </value>
         public String RecipientMobile { get; set; }
 
         /// <summary>
@@ -87,6 +118,14 @@
         /// The value.
         /// </value>
         public Decimal Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets the balance.
+        /// </summary>
+        /// <value>
+        /// The balance.
+        /// </value>
+        public Decimal Balance { get; set; }
 
         /// <summary>
         /// Gets the voucher code.

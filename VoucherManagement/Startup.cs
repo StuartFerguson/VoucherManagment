@@ -121,6 +121,7 @@ namespace VoucherManagement
                 services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
                 services.AddEventStoreClient(Startup.ConfigureEventStoreSettings);
                 services.AddEventStoreProjectionManagerClient(Startup.ConfigureEventStoreSettings);
+                services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
             }
 
             services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
@@ -129,6 +130,7 @@ namespace VoucherManagement
             services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate>, AggregateRepository<VoucherAggregate.VoucherAggregate>>();
             services.AddSingleton<IVoucherDomainService, VoucherDomainService>();
             services.AddSingleton<Factories.IModelFactory, Factories.ModelFactory>();
+            services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
 
             services.AddSingleton<Func<String, String>>(container => (serviceName) =>
                                                                      {
@@ -147,6 +149,7 @@ namespace VoucherManagement
                                                   });
 
             services.AddSingleton<IRequestHandler<IssueVoucherRequest, IssueVoucherResponse>, VoucherManagementRequestHandler>();
+            services.AddSingleton<IRequestHandler<RedeemVoucherRequest, RedeemVoucherResponse>, VoucherManagementRequestHandler>();
 
             Dictionary<String, String[]> eventHandlersConfiguration = new Dictionary<String, String[]>();
 
