@@ -135,6 +135,14 @@
         /// </value>
         public String VoucherCode { get; set; }
 
+        /// <summary>
+        /// Gets or sets the voucher identifier.
+        /// </summary>
+        /// <value>
+        /// The voucher identifier.
+        /// </value>
+        public Guid VoucherId { get; set; }
+
         #endregion
     }
 }
