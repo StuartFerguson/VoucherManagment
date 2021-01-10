@@ -1,6 +1,7 @@
 namespace VoucherManagement.BusinessLogic.Tests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Moq;
@@ -11,6 +12,7 @@ namespace VoucherManagement.BusinessLogic.Tests
     using Testing;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class VoucherManagementRequestHandlerTests
     {
         [Fact]

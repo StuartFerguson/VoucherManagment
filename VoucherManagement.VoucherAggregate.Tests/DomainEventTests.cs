@@ -4,11 +4,13 @@ using System.Text;
 
 namespace VoucherManagement.VoucherAggregate.Tests
 {
+    using System.Diagnostics.CodeAnalysis;
     using Shouldly;
     using VoucherManagement.Testing;
     using VoucherManagement.Voucher.DomainEvents;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class DomainEventTests
     {
         [Fact]

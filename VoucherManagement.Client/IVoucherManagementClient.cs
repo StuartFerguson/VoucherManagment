@@ -13,6 +13,19 @@
         #region Methods
 
         /// <summary>
+        /// Gets the voucher.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="estateId">The estate identifier.</param>
+        /// <param name="voucherCode">The voucher code.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        Task<GetVoucherResponse> GetVoucher(String accessToken,
+                                            Guid estateId,
+                                            String voucherCode,
+                                            CancellationToken cancellationToken);
+
+        /// <summary>
         /// Issues the voucher.
         /// </summary>
         /// <param name="accessToken">The access token.</param>

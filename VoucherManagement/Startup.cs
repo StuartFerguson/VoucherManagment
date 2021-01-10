@@ -20,6 +20,7 @@ namespace VoucherManagement
     using System.Xml;
     using BusinessLogic;
     using BusinessLogic.EventHandling;
+    using BusinessLogic.Manager;
     using BusinessLogic.RequestHandlers;
     using BusinessLogic.Requests;
     using BusinessLogic.Services;
@@ -129,6 +130,7 @@ namespace VoucherManagement
             services.AddTransient<IEventStoreContext, EventStoreContext>();
             services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate>, AggregateRepository<VoucherAggregate.VoucherAggregate>>();
             services.AddSingleton<IVoucherDomainService, VoucherDomainService>();
+            services.AddSingleton<IVoucherManagementManager, VoucherManagementManager>();
             services.AddSingleton<Factories.IModelFactory, Factories.ModelFactory>();
             services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
 

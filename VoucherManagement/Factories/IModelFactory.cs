@@ -16,6 +16,13 @@
         /// <returns></returns>
         IssueVoucherResponse ConvertFrom(Models.IssueVoucherResponse voucherResponse);
 
+        /// <summary>
+        /// Converts from.
+        /// </summary>
+        /// <param name="voucherModel">The voucher model.</param>
+        /// <returns></returns>
+        GetVoucherResponse ConvertFrom(Models.Voucher voucherModel);
+
         #endregion
     }
 }

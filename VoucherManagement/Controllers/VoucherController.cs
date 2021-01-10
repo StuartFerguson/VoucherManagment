@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using BusinessLogic.Manager;
     using Common;
     using DataTransferObjects;
     using Factories;
@@ -24,6 +25,8 @@
 
         private readonly IMediator Mediator;
 
+        private readonly IVoucherManagementManager VoucherManagementManager;
+
         private readonly IModelFactory ModelFactory;
 
         #endregion
@@ -31,9 +34,11 @@
         #region Constructors
 
         public VoucherController(IMediator mediator,
+                                 IVoucherManagementManager voucherManagementManager,
                                  IModelFactory modelFactory)
         {
             this.Mediator = mediator;
+            this.VoucherManagementManager = voucherManagementManager;
             this.ModelFactory = modelFactory;
         }
 
@@ -99,6 +104,22 @@
             return this.Ok();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetVoucherByCode([FromQuery] Guid estateId,
+                                                          [FromQuery] String voucherCode,
+                                                          CancellationToken cancellationToken)
+        {
+            // Reject password tokens
+            if (ClaimsHelper.IsPasswordToken(this.User))
+            {
+                return this.Forbid();
+            }
+
+            Voucher voucherModel = await this.VoucherManagementManager.GetVoucherByCode(estateId, voucherCode, cancellationToken);
+
+            return this.Ok(this.ModelFactory.ConvertFrom(voucherModel));
+
+        }
         #endregion
 
         #region Others

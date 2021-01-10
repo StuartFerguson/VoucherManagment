@@ -27,7 +27,7 @@
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherManagementClient"/> class.
+        /// Initializes a new instance of the <see cref="VoucherManagementClient" /> class.
         /// </summary>
         /// <param name="baseAddressResolver">The base address resolver.</param>
         /// <param name="httpClient">The HTTP client.</param>
@@ -77,6 +77,48 @@
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception("Error issuing voucher.", ex);
+
+                throw exception;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets the voucher.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="estateId">The estate identifier.</param>
+        /// <param name="voucherCode">The voucher code.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task<GetVoucherResponse> GetVoucher(String accessToken,
+                                                         Guid estateId,
+                                                         String voucherCode,
+                                                         CancellationToken cancellationToken)
+        {
+            GetVoucherResponse response = null;
+
+            String requestUri = $"{this.BaseAddress}/api/vouchers?estateId={estateId}&voucherCode={voucherCode}";
+
+            try
+            {
+                // Add the access token to the client headers
+                this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Make the Http Call here
+                HttpResponseMessage httpResponse = await this.HttpClient.GetAsync(requestUri, cancellationToken);
+
+                // Process the response
+                String content = await this.HandleResponse(httpResponse, cancellationToken);
+
+                // call was successful so now deserialise the body to the response object
+                response = JsonConvert.DeserializeObject<GetVoucherResponse>(content);
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception("Error getting voucher.", ex);
 
                 throw exception;
             }

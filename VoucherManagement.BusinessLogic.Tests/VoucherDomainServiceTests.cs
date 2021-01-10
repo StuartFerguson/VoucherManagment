@@ -2,6 +2,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using EstateManagement.Client;
@@ -26,6 +27,7 @@ namespace VoucherManagement.BusinessLogic.Tests
     using Xunit;
     using Voucher = EstateReporting.Database.Entities.Voucher;
 
+    [ExcludeFromCodeCoverage]
     public class VoucherDomainServiceTests
     {
         [Fact]

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.IO.Abstractions.TestingHelpers;
     using System.Reflection;
@@ -25,7 +26,8 @@
     using VoucherAggregate;
     using Xunit;
 
-    public class VoucherDomainEventHandlerTests
+    [ExcludeFromCodeCoverage]
+    public partial class VoucherDomainEventHandlerTests
     {
         private async Task<EstateReportingContext> GetContext(String databaseName, TestDatabaseType databaseType = TestDatabaseType.InMemory)
         {
@@ -53,12 +55,6 @@
             }
 
             return context;
-        }
-
-        public enum TestDatabaseType
-        {
-            InMemory = 0,
-            SqliteInMemory = 1
         }
 
         [Fact]
