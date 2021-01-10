@@ -4,6 +4,7 @@ using System.Text;
 
 namespace VoucherManagement.BusinessLogic.Tests
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using EventHandling;
     using Moq;
@@ -12,6 +13,7 @@ namespace VoucherManagement.BusinessLogic.Tests
     using Voucher.DomainEvents;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class DomainEventHandlerResolverTests
     {
         [Fact]

@@ -3,11 +3,13 @@ using Xunit;
 
 namespace VoucherManagment.VoucherAggregate.Tests
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using Shouldly;
     using VoucherManagement.Testing;
     using VoucherManagement.VoucherAggregate;
 
+    [ExcludeFromCodeCoverage]
     public class VoucherAggregateTests
     {
         [Fact]

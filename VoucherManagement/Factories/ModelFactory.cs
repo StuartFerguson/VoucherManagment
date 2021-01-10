@@ -2,6 +2,8 @@
 {
     using DataTransferObjects;
     using Microsoft.Rest;
+    using Models;
+    using IssueVoucherResponse = DataTransferObjects.IssueVoucherResponse;
 
     /// <summary>
     /// 
@@ -34,6 +36,31 @@
             return response;
 
 
+        }
+
+        public GetVoucherResponse ConvertFrom(Voucher voucherModel)
+        {
+            if (voucherModel == null)
+            {
+                return null;
+            }
+
+            GetVoucherResponse response = new GetVoucherResponse
+                                          {
+                                              Value = voucherModel.Value,
+                                              Balance = voucherModel.Balance,
+                                              ExpiryDate = voucherModel.ExpiryDate,
+                                              VoucherCode = voucherModel.VoucherCode,
+                                              TransactionId = voucherModel.TransactionId,
+                                              IssuedDateTime = voucherModel.IssuedDateTime,
+                                              IsIssued = voucherModel.IsIssued,
+                                              GeneratedDateTime = voucherModel.GeneratedDateTime,
+                                              IsGenerated = voucherModel.IsGenerated,
+                                              IsRedeemed = voucherModel.IsRedeemed,
+                                              RedeemedDateTime = voucherModel.RedeemedDateTime
+                                          };
+
+            return response;
         }
 
         #endregion

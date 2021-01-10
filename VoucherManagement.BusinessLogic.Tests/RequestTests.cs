@@ -2,11 +2,13 @@ using Xunit;
 
 namespace VoucherManagement.BusinessLogic.Tests
 {
+    using System.Diagnostics.CodeAnalysis;
     using Models;
     using Requests;
     using Shouldly;
     using Testing;
 
+    [ExcludeFromCodeCoverage]
     public class RequestTests
     {
         [Fact]
