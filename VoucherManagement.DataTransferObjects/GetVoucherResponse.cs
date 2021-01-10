@@ -12,6 +12,9 @@ namespace VoucherManagement.DataTransferObjects
     [ExcludeFromCodeCoverage]
     public class GetVoucherResponse
     {
+        
+        public Guid VoucherId { get;set;}
+
         /// <summary>
         /// Gets the expiry date.
         /// </summary>

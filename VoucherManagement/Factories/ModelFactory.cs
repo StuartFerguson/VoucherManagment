@@ -57,7 +57,8 @@
                                               GeneratedDateTime = voucherModel.GeneratedDateTime,
                                               IsGenerated = voucherModel.IsGenerated,
                                               IsRedeemed = voucherModel.IsRedeemed,
-                                              RedeemedDateTime = voucherModel.RedeemedDateTime
+                                              RedeemedDateTime = voucherModel.RedeemedDateTime,
+                                              VoucherId=voucherModel.VoucherId
                                           };
 
             return response;

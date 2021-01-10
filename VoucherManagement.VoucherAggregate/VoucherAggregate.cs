@@ -245,7 +245,8 @@
                        IsGenerated = this.IsGenerated,
                        RecipientEmail = this.RecipientEmail,
                        RecipientMobile = this.RecipientMobile,
-                       Balance = this.Balance
+                       Balance = this.Balance,
+                       VoucherId = this.AggregateId
                    };
         }
 
