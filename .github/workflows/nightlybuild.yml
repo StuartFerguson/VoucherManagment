@@ -47,4 +47,4 @@ jobs:
       run: docker build . --file VoucherManagement/Dockerfile --tag vouchermanagement:latest
 
     - name: Run Integration Tests
-      run: dotnet test "TransactionProcessor.IntegrationTests\TransactionProcessor.IntegrationTests.csproj"
+      run: dotnet test "VoucherManagement.IntegrationTests\VoucherManagement.IntegrationTests.csproj"
