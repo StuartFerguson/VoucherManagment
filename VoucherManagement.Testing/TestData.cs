@@ -129,6 +129,8 @@ namespace VoucherManagement.Testing
 
         public static RedeemVoucherRequest RedeemVoucherRequest = RedeemVoucherRequest.Create(TestData.EstateId,TestData.VoucherCode,TestData.RedeemedDateTime);
 
+        private static Decimal RemainingBalance = 1.00m;
+
         public static IssueVoucherResponse IssueVoucherResponse =>
             new IssueVoucherResponse
             {
@@ -136,6 +138,14 @@ namespace VoucherManagement.Testing
                 Message = TestData.Message,
                 VoucherCode = TestData.VoucherCode,
                 VoucherId = TestData.VoucherId
+            };
+
+        public static RedeemVoucherResponse RedeemVoucherResponse =>
+            new RedeemVoucherResponse
+            {
+                ExpiryDate = TestData.ExpiryDate,
+                VoucherCode = TestData.VoucherCode,
+                RemainingBalance = TestData.RemainingBalance
             };
 
         public static VoucherAggregate GetVoucherAggregateWithRecipientEmail()
@@ -157,11 +167,5 @@ namespace VoucherManagement.Testing
 
             return aggregate;
         }
-
-        public static RedeemVoucherResponse RedeemVoucherResponse =>
-            new RedeemVoucherResponse
-            {
-                RemainingBalance = 0
-            };
     }
 }

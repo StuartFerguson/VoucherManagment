@@ -151,7 +151,9 @@
 
             return new RedeemVoucherResponse
                    {
-                       RemainingBalance = voucherModel.Balance
+                       RemainingBalance = voucherModel.Balance,
+                       ExpiryDate = voucherModel.ExpiryDate,
+                       VoucherCode = voucherModel.VoucherCode
                    };
         }
 

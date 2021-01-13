@@ -13,6 +13,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Models;
     using IssueVoucherResponse = Models.IssueVoucherResponse;
+    using RedeemVoucherResponse = Models.RedeemVoucherResponse;
 
     [ExcludeFromCodeCoverage]
     [Route(VoucherController.ControllerRoute)]
@@ -101,9 +102,16 @@
 
             RedeemVoucherResponse response = await this.Mediator.Send(request, cancellationToken);
             
-            return this.Ok();
+            return this.Ok(this.ModelFactory.ConvertFrom(response));
         }
 
+        /// <summary>
+        /// Gets the voucher by code.
+        /// </summary>
+        /// <param name="estateId">The estate identifier.</param>
+        /// <param name="voucherCode">The voucher code.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetVoucherByCode([FromQuery] Guid estateId,
                                                           [FromQuery] String voucherCode,
