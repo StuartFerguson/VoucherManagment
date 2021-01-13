@@ -13,6 +13,7 @@ namespace VoucherManagement.Tests
     using Testing;
     using Xunit;
     using IssueVoucherResponse = Models.IssueVoucherResponse;
+    using RedeemVoucherResponse = Models.RedeemVoucherResponse;
 
     [ExcludeFromCodeCoverage]
     public class ModelFactoryTests
@@ -70,6 +71,29 @@ namespace VoucherManagement.Tests
             ModelFactory modelFactory = new ModelFactory();
             Voucher model = null;
             GetVoucherResponse dto = modelFactory.ConvertFrom(model);
+
+            dto.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_RedeemVoucherResponse_IsConverted()
+        {
+            ModelFactory modelFactory = new ModelFactory();
+            RedeemVoucherResponse model = TestData.RedeemVoucherResponse;
+            DataTransferObjects.RedeemVoucherResponse dto = modelFactory.ConvertFrom(model);
+
+            dto.ShouldNotBeNull();
+            dto.ExpiryDate.ShouldBe(model.ExpiryDate);
+            dto.VoucherCode.ShouldBe(model.VoucherCode);
+            dto.RemainingBalance.ShouldBe(model.RemainingBalance);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_RedeemVoucherResponse_NullInput_IsConverted()
+        {
+            ModelFactory modelFactory = new ModelFactory();
+            IssueVoucherResponse model = null;
+            DataTransferObjects.IssueVoucherResponse dto = modelFactory.ConvertFrom(model);
 
             dto.ShouldBeNull();
         }

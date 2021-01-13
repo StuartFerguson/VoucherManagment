@@ -1,9 +1,9 @@
 ﻿namespace VoucherManagement.Factories
 {
     using DataTransferObjects;
-    using Microsoft.Rest;
     using Models;
     using IssueVoucherResponse = DataTransferObjects.IssueVoucherResponse;
+    using RedeemVoucherResponse = DataTransferObjects.RedeemVoucherResponse;
 
     /// <summary>
     /// 
@@ -16,28 +16,31 @@
         /// <summary>
         /// Converts from.
         /// </summary>
-        /// <param name="voucherResponse">The voucher response.</param>
+        /// <param name="issueVoucherResponse">The issue voucher response.</param>
         /// <returns></returns>
-        public IssueVoucherResponse ConvertFrom(Models.IssueVoucherResponse voucherResponse)
+        public IssueVoucherResponse ConvertFrom(Models.IssueVoucherResponse issueVoucherResponse)
         {
-            if (voucherResponse == null)
+            if (issueVoucherResponse == null)
             {
                 return null;
             }
 
             IssueVoucherResponse response = new IssueVoucherResponse
                                             {
-                                                Message = voucherResponse.Message,
-                                                ExpiryDate = voucherResponse.ExpiryDate,
-                                                VoucherCode = voucherResponse.VoucherCode,
-                                                VoucherId = voucherResponse.VoucherId
+                                                Message = issueVoucherResponse.Message,
+                                                ExpiryDate = issueVoucherResponse.ExpiryDate,
+                                                VoucherCode = issueVoucherResponse.VoucherCode,
+                                                VoucherId = issueVoucherResponse.VoucherId
                                             };
 
             return response;
-
-
         }
 
+        /// <summary>
+        /// Converts from.
+        /// </summary>
+        /// <param name="voucherModel">The voucher model.</param>
+        /// <returns></returns>
         public GetVoucherResponse ConvertFrom(Voucher voucherModel)
         {
             if (voucherModel == null)
@@ -58,8 +61,30 @@
                                               IsGenerated = voucherModel.IsGenerated,
                                               IsRedeemed = voucherModel.IsRedeemed,
                                               RedeemedDateTime = voucherModel.RedeemedDateTime,
-                                              VoucherId=voucherModel.VoucherId
+                                              VoucherId = voucherModel.VoucherId
                                           };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Converts from.
+        /// </summary>
+        /// <param name="redeemVoucherResponse">The redeem voucher response.</param>
+        /// <returns></returns>
+        public RedeemVoucherResponse ConvertFrom(Models.RedeemVoucherResponse redeemVoucherResponse)
+        {
+            if (redeemVoucherResponse == null)
+            {
+                return null;
+            }
+
+            RedeemVoucherResponse response = new RedeemVoucherResponse
+                                             {
+                                                 ExpiryDate = redeemVoucherResponse.ExpiryDate,
+                                                 VoucherCode = redeemVoucherResponse.VoucherCode,
+                                                 RemainingBalance = redeemVoucherResponse.RemainingBalance
+                                             };
 
             return response;
         }
