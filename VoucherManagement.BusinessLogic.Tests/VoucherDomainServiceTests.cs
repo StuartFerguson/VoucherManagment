@@ -30,6 +30,11 @@ namespace VoucherManagement.BusinessLogic.Tests
     [ExcludeFromCodeCoverage]
     public class VoucherDomainServiceTests
     {
+        private Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>> GetMockDbContextFactory()
+        {
+            return new Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>>();
+        }
+
         [Fact]
         public async Task VoucherDomainService_IssueVoucher_VoucherIssued()
         {
@@ -47,7 +52,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -82,7 +87,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -120,7 +125,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -158,7 +163,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -196,7 +201,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -238,7 +243,7 @@ namespace VoucherManagement.BusinessLogic.Tests
                                      EstateId = TestData.EstateId
                                  });
             await context.SaveChangesAsync();
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -277,7 +282,7 @@ namespace VoucherManagement.BusinessLogic.Tests
                 EstateId = TestData.EstateId
             });
             await context.SaveChangesAsync();
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
@@ -311,7 +316,7 @@ namespace VoucherManagement.BusinessLogic.Tests
             estateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetEstateResponseWithOperator1);
 
             EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             VoucherDomainService domainService = new VoucherDomainService(voucherAggregateRepository.Object,
