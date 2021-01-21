@@ -25,6 +25,11 @@ namespace VoucherManagement.BusinessLogic.Tests
     [ExcludeFromCodeCoverage]
     public class VoucherManagementManagerTests
     {
+        private Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>> GetMockDbContextFactory()
+        {
+            return new Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>>();
+        }
+
         private async Task<EstateReportingContext> GetContext(String databaseName, TestDatabaseType databaseType = TestDatabaseType.InMemory)
         {
             EstateReportingContext context = null;
@@ -65,7 +70,7 @@ namespace VoucherManagement.BusinessLogic.Tests
                                       });
             await context.SaveChangesAsync(CancellationToken.None);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             Mock<IAggregateRepository<VoucherAggregate>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate>>();
@@ -85,7 +90,7 @@ namespace VoucherManagement.BusinessLogic.Tests
 
             await context.SaveChangesAsync(CancellationToken.None);
 
-            Mock<IDbContextFactory<EstateReportingContext>> dbContextFactory = new Mock<IDbContextFactory<EstateReportingContext>>();
+            var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
             Mock<IAggregateRepository<VoucherAggregate>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate>>();
