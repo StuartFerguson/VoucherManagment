@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="EstateManagement.Client" Version="1.0.6" />
-    <PackageReference Include="SecurityService.Client" Version="1.0.4" />
+    <PackageReference Include="SecurityService.Client" Version="1.0.4.1" />
     <PackageReference Include="Shared" Version="1.0.3" />
     <PackageReference Include="Shared.IntegrationTesting" Version="1.0.3" />
     <PackageReference Include="Shouldly" Version="4.0.3" />

@@ -86,69 +86,84 @@ namespace VoucherManagement.IntegrationTests.IssueVoucher
 #line 4
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Name",
+                        "DisplayName",
+                        "Description"});
+            table1.AddRow(new string[] {
+                        "estateManagement",
+                        "Estate Managememt REST Scope",
+                        "A scope for Estate Managememt REST"});
+            table1.AddRow(new string[] {
+                        "voucherManagement",
+                        "Voucher Management REST  Scope",
+                        "A scope for Voucher Management REST"});
+#line 6
+ testRunner.Given("I create the following api scopes", ((string)(null)), table1, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "ResourceName",
                         "DisplayName",
                         "Secret",
                         "Scopes",
                         "UserClaims"});
-            table1.AddRow(new string[] {
+            table2.AddRow(new string[] {
                         "estateManagement",
                         "Estate Managememt REST",
                         "Secret1",
                         "estateManagement",
                         "MerchantId, EstateId, role"});
-            table1.AddRow(new string[] {
+            table2.AddRow(new string[] {
                         "voucherManagement",
                         "Voucher Management REST",
                         "Secret1",
                         "voucherManagement",
                         ""});
-#line 6
- testRunner.Given("the following api resources exist", ((string)(null)), table1, "Given ");
+#line 11
+ testRunner.Given("the following api resources exist", ((string)(null)), table2, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
                         "ClientId",
                         "ClientName",
                         "Secret",
                         "AllowedScopes",
                         "AllowedGrantTypes"});
-            table2.AddRow(new string[] {
+            table3.AddRow(new string[] {
                         "serviceClient",
                         "Service Client",
                         "Secret1",
                         "estateManagement,voucherManagement",
                         "client_credentials"});
-#line 11
- testRunner.Given("the following clients exist", ((string)(null)), table2, "Given ");
-#line hidden
-            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
-                        "ClientId"});
-            table3.AddRow(new string[] {
-                        "serviceClient"});
-#line 15
- testRunner.Given("I have a token to access the estate management and voucher management resources", ((string)(null)), table3, "Given ");
+#line 16
+ testRunner.Given("the following clients exist", ((string)(null)), table3, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
-                        "EstateName"});
+                        "ClientId"});
             table4.AddRow(new string[] {
-                        "Test Estate 1"});
-            table4.AddRow(new string[] {
-                        "Test Estate 2"});
-#line 19
- testRunner.Given("I have created the following estates", ((string)(null)), table4, "Given ");
+                        "serviceClient"});
+#line 20
+ testRunner.Given("I have a token to access the estate management and voucher management resources", ((string)(null)), table4, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EstateName"});
+            table5.AddRow(new string[] {
+                        "Test Estate 1"});
+            table5.AddRow(new string[] {
+                        "Test Estate 2"});
+#line 24
+ testRunner.Given("I have created the following estates", ((string)(null)), table5, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                         "EstateName",
                         "OperatorName",
                         "RequireCustomMerchantNumber",
                         "RequireCustomTerminalNumber"});
-            table5.AddRow(new string[] {
+            table6.AddRow(new string[] {
                         "Test Estate 1",
                         "Test Operator 1",
                         "True",
                         "True"});
-#line 24
- testRunner.Given("I have created the following operators", ((string)(null)), table5, "Given ");
+#line 29
+ testRunner.Given("I have created the following operators", ((string)(null)), table6, "Given ");
 #line hidden
         }
         
@@ -167,7 +182,7 @@ namespace VoucherManagement.IntegrationTests.IssueVoucher
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Issue Vouchers", null, tagsOfScenario, argumentsOfScenario);
-#line 29
+#line 34
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -190,29 +205,29 @@ this.ScenarioInitialize(scenarioInfo);
 #line 4
 this.FeatureBackground();
 #line hidden
-                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                             "EstateName",
                             "OperatorName",
                             "Value",
                             "TransactionId",
                             "RecipientEmail",
                             "RecipientMobile"});
-                table6.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Test Estate 1",
                             "Test Operator 1",
                             "10.00",
                             "19f2776a-4230-40d4-8cd2-3649e18732e0",
                             "testrecipient1@recipient.co.uk",
                             ""});
-                table6.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Test Estate 1",
                             "Test Operator 1",
                             "20.00",
                             "6351e047-8f31-4472-a294-787caa5fb738",
                             "",
                             "123456788"});
-#line 30
- testRunner.When("I issue the following vouchers", ((string)(null)), table6, "When ");
+#line 35
+ testRunner.When("I issue the following vouchers", ((string)(null)), table7, "When ");
 #line hidden
             }
             this.ScenarioCleanup();
