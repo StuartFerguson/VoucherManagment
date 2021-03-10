@@ -11,6 +11,10 @@ namespace VoucherManagement
 {
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using Microsoft.Extensions.DependencyInjection;
+    using Shared.EventStore.Aggregate;
+    using Shared.EventStore.Subscriptions;
+    using Voucher.DomainEvents;
 
     [ExcludeFromCodeCoverage]
     public class Program
@@ -37,6 +41,14 @@ namespace VoucherManagement
                                                      webBuilder.UseConfiguration(config);
                                                      webBuilder.UseKestrel();
                                                  });
+            hostBuilder.ConfigureServices(services =>
+                                          {
+                                              VoucherIssuedEvent i = new VoucherIssuedEvent(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, "", ""); 
+
+                                              TypeProvider.LoadDomainEventsTypeDynamically();
+
+                                              services.AddHostedService<SubscriptionWorker>();
+                                          });
             return hostBuilder;
         }
 

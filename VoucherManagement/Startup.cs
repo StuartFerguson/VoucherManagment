@@ -43,8 +43,11 @@ namespace VoucherManagement
     using Newtonsoft.Json.Serialization;
     using NLog.Extensions.Logging;
     using SecurityService.Client;
+    using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EntityFramework;
     using Shared.EntityFramework.ConnectionStringConfiguration;
+    using Shared.EventStore.Aggregate;
+    using Shared.EventStore.EventHandling;
     using Shared.EventStore.EventStore;
     using Shared.Extensions;
     using Shared.General;
@@ -121,14 +124,15 @@ namespace VoucherManagement
             {
                 services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
                 services.AddEventStoreClient(Startup.ConfigureEventStoreSettings);
-                services.AddEventStoreProjectionManagerClient(Startup.ConfigureEventStoreSettings);
+                services.AddEventStoreProjectionManagementClient(Startup.ConfigureEventStoreSettings);
+                services.AddEventStorePersistentSubscriptionsClient(Startup.ConfigureEventStoreSettings);
                 services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
             }
 
             services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
 
             services.AddTransient<IEventStoreContext, EventStoreContext>();
-            services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate>, AggregateRepository<VoucherAggregate.VoucherAggregate>>();
+            services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>, AggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>>();
             services.AddSingleton<IVoucherDomainService, VoucherDomainService>();
             services.AddSingleton<IVoucherManagementManager, VoucherManagementManager>();
             services.AddSingleton<Factories.IModelFactory, Factories.ModelFactory>();
@@ -180,11 +184,11 @@ namespace VoucherManagement
         private void ConfigureMiddlewareServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                    .AddEventStore(Startup.EventStoreClientSettings,
-                                   userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
-                                   name: "Eventstore",
-                                   failureStatus: HealthStatus.Unhealthy,
-                                   tags: new string[] { "db", "eventstore" })
+                    //.AddEventStore(Startup.EventStoreClientSettings,
+                    //               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
+                    //               name: "Eventstore",
+                    //               failureStatus: HealthStatus.Unhealthy,
+                    //               tags: new string[] { "db", "eventstore" })
                     .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
                                   healthQuery: "SELECT 1;",
                                   name: "Read Model Server",

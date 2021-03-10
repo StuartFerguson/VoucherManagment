@@ -16,6 +16,8 @@
     using SecurityService.DataTransferObjects.Responses;
     using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EntityFramework;
+    using Shared.EventStore.Aggregate;
+    using Shared.EventStore.EventHandling;
     using Shared.EventStore.EventStore;
     using Shared.General;
     using Shared.Logger;
@@ -26,7 +28,7 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="VoucherManagement.BusinessLogic.EventHandling.IDomainEventHandler" />
+    /// <seealso cref="IDomainEventHandler" />
     public class VoucherDomainEventHandler : IDomainEventHandler
     {
         #region Fields
@@ -59,7 +61,7 @@
         /// <summary>
         /// The voucher aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<VoucherAggregate> VoucherAggregateRepository;
+        private readonly IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> VoucherAggregateRepository;
 
         #endregion
 
@@ -74,7 +76,7 @@
         /// <param name="messagingServiceClient">The messaging service client.</param>
         /// <param name="fileSystem">The file system.</param>
         public VoucherDomainEventHandler(ISecurityServiceClient securityServiceClient,
-                                         IAggregateRepository<VoucherAggregate> voucherAggregateRepository,
+                                         IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
                                          IDbContextFactory<EstateReportingContext> dbContextFactory,
                                          IMessagingServiceClient messagingServiceClient,
                                          IFileSystem fileSystem)
@@ -123,7 +125,7 @@
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task Handle(DomainEvent domainEvent,
+        public async Task Handle(IDomainEvent domainEvent,
                                  CancellationToken cancellationToken)
         {
             await this.HandleSpecificDomainEvent((dynamic)domainEvent, cancellationToken);

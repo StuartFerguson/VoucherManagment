@@ -13,7 +13,9 @@
     using NetBarcode;
     using SecurityService.Client;
     using SecurityService.DataTransferObjects.Responses;
+    using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EntityFramework;
+    using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventStore;
     using Shared.Exceptions;
     using Shared.General;
@@ -29,7 +31,7 @@
         /// <summary>
         /// The voucher aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<VoucherAggregate> VoucherAggregateRepository;
+        private readonly IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> VoucherAggregateRepository;
 
         /// <summary>
         /// The security service client
@@ -55,7 +57,7 @@
         /// <param name="securityServiceClient">The security service client.</param>
         /// <param name="estateClient">The estate client.</param>
         /// <param name="dbContextFactory">The database context factory.</param>
-        public VoucherDomainService(IAggregateRepository<VoucherAggregate> voucherAggregateRepository,
+        public VoucherDomainService(IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
                                     ISecurityServiceClient securityServiceClient,
                                     IEstateClient estateClient,
                                     IDbContextFactory<EstateReportingContext> dbContextFactory)
