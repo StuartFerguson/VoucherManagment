@@ -6,143 +6,89 @@ namespace VoucherManagement.Voucher.DomainEvents
     using Newtonsoft.Json;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <seealso cref="Shared.DomainDrivenDesign.EventSourcing.DomainEvent" />
-    [JsonObject]
-    public class VoucherGeneratedEvent : DomainEvent
+    public record VoucherGeneratedEvent : DomainEventRecord.DomainEvent
     {
         /// <summary>
-        /// Gets the estate identifier.
+        /// Gets or sets the estate identifier.
         /// </summary>
         /// <value>
         /// The estate identifier.
         /// </value>
-        [JsonProperty]
-        public Guid EstateId { get; private set; }
+        public Guid EstateId { get; init; }
 
         /// <summary>
-        /// Gets the transaction identifier.
+        /// Gets or sets the transaction identifier.
         /// </summary>
         /// <value>
         /// The transaction identifier.
         /// </value>
-        [JsonProperty]
-        public Guid TransactionId { get; private set; }
-
+        public Guid TransactionId { get; init; }
         /// <summary>
-        /// Gets the voucher identifier.
+        /// Gets or sets the voucher identifier.
         /// </summary>
         /// <value>
         /// The voucher identifier.
         /// </value>
-        [JsonProperty]
-        public Guid VoucherId { get; private set; }
-
+        public Guid VoucherId { get; init; }
         /// <summary>
-        /// Gets the operator identifier.
+        /// Gets or sets the operator identifier.
         /// </summary>
         /// <value>
         /// The operator identifier.
         /// </value>
-        [JsonProperty]
-        public String OperatorIdentifier { get; private set; }
-
+        public String OperatorIdentifier { get; init; }
         /// <summary>
-        /// Gets the value.
+        /// Gets or sets the value.
         /// </summary>
         /// <value>
         /// The value.
         /// </value>
-        [JsonProperty]
-        public Decimal Value { get; private set; }
+        public Decimal Value { get; init; }
 
         /// <summary>
-        /// Gets the voucher code.
+        /// Gets or sets the voucher code.
         /// </summary>
         /// <value>
         /// The voucher code.
         /// </value>
-        [JsonProperty]
-        public String VoucherCode { get; private set; }
+        public String VoucherCode { get; init; }
 
         /// <summary>
-        /// Gets the expiry date time.
+        /// Gets or sets the expiry date time.
         /// </summary>
         /// <value>
         /// The expiry date time.
         /// </value>
-        [JsonProperty]
-        public DateTime ExpiryDateTime { get; private set; }
-
+        public DateTime ExpiryDateTime { get; init; }
         /// <summary>
-        /// Gets the generated date time.
+        /// Gets or sets the generated date time.
         /// </summary>
         /// <value>
         /// The generated date time.
         /// </value>
-        [JsonProperty]
-        public DateTime GeneratedDateTime { get; private set; }
-
+        public DateTime GeneratedDateTime { get; init; }
         /// <summary>
-        /// Gets the message.
+        /// Gets or sets the message.
         /// </summary>
         /// <value>
         /// The message.
         /// </value>
-        [JsonProperty]
-        public String Message { get; private set; }
+        public String Message { get; init; }
 
-        /// <summary>
-        /// Creates the specified aggregate identifier.
-        /// </summary>
-        /// <param name="aggregateId">The aggregate identifier.</param>
-        /// <param name="estateId">The estate identifier.</param>
-        /// <param name="transactionId">The transaction identifier.</param>
-        /// <param name="generatedDateTime">The generated date time.</param>
-        /// <param name="operatorIdentifier">The operator identifier.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="voucherCode">The voucher code.</param>
-        /// <param name="expiryDateTime">The expiry date time.</param>
-        /// <param name="message">The message.</param>
-        /// <returns></returns>
-        public static VoucherGeneratedEvent Create(Guid aggregateId,
-                                                   Guid estateId,
-                                                   Guid transactionId,
-                                                   DateTime generatedDateTime,
-                                                   String operatorIdentifier,
-                                                   Decimal value,
-                                                   String voucherCode,
-                                                   DateTime expiryDateTime,
-                                                   String message)
-        {
-            return new VoucherGeneratedEvent(aggregateId,Guid.NewGuid(), estateId, transactionId, generatedDateTime, operatorIdentifier,value,voucherCode, expiryDateTime, message);
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherGeneratedEvent"/> class.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        public VoucherGeneratedEvent()
-        {
-            
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoucherGeneratedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
-        /// <param name="eventId">The event identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
-        /// <param name="generatedDateTime">The generated date time.</param>
         /// <param name="transactionId">The transaction identifier.</param>
+        /// <param name="generatedDateTime">The generated date time.</param>
         /// <param name="operatorIdentifier">The operator identifier.</param>
         /// <param name="value">The value.</param>
         /// <param name="voucherCode">The voucher code.</param>
         /// <param name="expiryDateTime">The expiry date time.</param>
         /// <param name="message">The message.</param>
-        private VoucherGeneratedEvent(Guid aggregateId,
-                                      Guid eventId,
+        public VoucherGeneratedEvent(Guid aggregateId,
                                       Guid estateId,
                                       Guid transactionId,
                                       DateTime generatedDateTime,
@@ -150,7 +96,7 @@ namespace VoucherManagement.Voucher.DomainEvents
                                       Decimal value,
                                       String voucherCode,
                                       DateTime expiryDateTime,
-            String message) :base(aggregateId, eventId)
+            String message) :base(aggregateId, Guid.NewGuid())
         {
             this.EstateId = estateId;
             this.TransactionId = transactionId;

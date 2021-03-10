@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using Models;
     using Shared.DomainDrivenDesign.EventSourcing;
+    using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventStore;
     using Shared.General;
     using Voucher.DomainEvents;
@@ -11,7 +12,7 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="Shared.EventStore.EventStore.Aggregate" />
+    /// <seealso cref="Aggregate" />
     public class VoucherAggregate : Aggregate
     {
         #region Fields
@@ -174,9 +175,9 @@
             this.CheckIfVoucherHasBeenGenerated();
             this.CheckIfVoucherAlreadyIssued();
 
-            BarcodeAddedEvent barcodeAddedEvent = BarcodeAddedEvent.Create(this.AggregateId, this.EstateId, barcodeAsBase64);
+            BarcodeAddedEvent barcodeAddedEvent = new BarcodeAddedEvent(this.AggregateId, this.EstateId, barcodeAsBase64);
 
-            this.ApplyAndPend(barcodeAddedEvent);
+            this.ApplyAndAppend(barcodeAddedEvent);
         }
 
         /// <summary>
@@ -217,9 +218,9 @@
             String message = string.Empty;
 
             VoucherGeneratedEvent voucherGeneratedEvent =
-                VoucherGeneratedEvent.Create(this.AggregateId, estateId, transactionId, generatedDateTime, operatorIdentifier, value, voucherCode, expiryDateTime, message);
+                new VoucherGeneratedEvent(this.AggregateId, estateId, transactionId, generatedDateTime, operatorIdentifier, value, voucherCode, expiryDateTime, message);
 
-            this.ApplyAndPend(voucherGeneratedEvent);
+            this.ApplyAndAppend(voucherGeneratedEvent);
         }
 
         /// <summary>
@@ -270,9 +271,9 @@
 
             this.CheckIfVoucherAlreadyIssued();
 
-            VoucherIssuedEvent voucherIssuedEvent = VoucherIssuedEvent.Create(this.AggregateId, this.EstateId, issuedDateTime, recipientEmail, recipientMobile);
+            VoucherIssuedEvent voucherIssuedEvent = new VoucherIssuedEvent(this.AggregateId, this.EstateId, issuedDateTime, recipientEmail, recipientMobile);
 
-            this.ApplyAndPend(voucherIssuedEvent);
+            this.ApplyAndAppend(voucherIssuedEvent);
         }
 
         /// <summary>
@@ -285,9 +286,9 @@
             this.CheckIfVoucherHasBeenIssued();
             this.CheckIfVoucherAlreadyRedeemed();
 
-            VoucherFullyRedeemedEvent voucherFullyRedeemedEvent = VoucherFullyRedeemedEvent.Create(this.AggregateId, this.EstateId, redeemedDateTime);
+            VoucherFullyRedeemedEvent voucherFullyRedeemedEvent = new VoucherFullyRedeemedEvent(this.AggregateId, this.EstateId, redeemedDateTime);
 
-            this.ApplyAndPend(voucherFullyRedeemedEvent);
+            this.ApplyAndAppend(voucherFullyRedeemedEvent);
         }
 
         /// <summary>
@@ -307,7 +308,7 @@
         /// Plays the event.
         /// </summary>
         /// <param name="domainEvent">The domain event.</param>
-        protected override void PlayEvent(DomainEvent domainEvent)
+        public override void PlayEvent(IDomainEvent domainEvent)
         {
             this.PlayEvent((dynamic)domainEvent);
         }

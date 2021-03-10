@@ -8,6 +8,7 @@ namespace VoucherManagement.BusinessLogic.Tests
     using System.Linq;
     using EventHandling;
     using Moq;
+    using Shared.EventStore.EventHandling;
     using Shouldly;
     using Testing;
     using Voucher.DomainEvents;
@@ -21,7 +22,7 @@ namespace VoucherManagement.BusinessLogic.Tests
         {
             Dictionary<String, String[]> eventHandlerConfiguration = new Dictionary<String, String[]>();
 
-            eventHandlerConfiguration.Add("TestEventType1", new String[] { "VoucherManagement.BusinessLogic.EventHandling.VoucherDomainEventHandler" });
+            eventHandlerConfiguration.Add("TestEventType1", new String[] { "VoucherManagement.BusinessLogic.EventHandling.VoucherDomainEventHandler, VoucherManagement.BusinessLogic" });
 
             Mock<IDomainEventHandler> domainEventHandler = new Mock<IDomainEventHandler>();
             Func<Type, IDomainEventHandler> createDomainEventHandlerFunc = (type) => { return domainEventHandler.Object; };
@@ -35,7 +36,7 @@ namespace VoucherManagement.BusinessLogic.Tests
         {
             Dictionary<String, String[]> eventHandlerConfiguration = new Dictionary<String, String[]>();
 
-            eventHandlerConfiguration.Add("TestEventType1", new String[] { "VoucherManagement.BusinessLogic.EventHandling.NonExistantDomainEventHandler" });
+            eventHandlerConfiguration.Add("TestEventType1", new String[] { "VoucherManagement.BusinessLogic.EventHandling.NonExistantDomainEventHandler, VoucherManagement.BusinessLogic" });
 
             Mock<IDomainEventHandler> domainEventHandler = new Mock<IDomainEventHandler>();
             Func<Type, IDomainEventHandler> createDomainEventHandlerFunc = (type) => { return domainEventHandler.Object; };
@@ -46,12 +47,12 @@ namespace VoucherManagement.BusinessLogic.Tests
         [Fact]
         public void DomainEventHandlerResolver_GetDomainEventHandlers_TransactionHasBeenCompletedEvent_EventHandlersReturned()
         {
-            String handlerTypeName = "VoucherManagement.BusinessLogic.EventHandling.VoucherDomainEventHandler";
+            String handlerTypeName = "VoucherManagement.BusinessLogic.EventHandling.VoucherDomainEventHandler, VoucherManagement.BusinessLogic";
             Dictionary<String, String[]> eventHandlerConfiguration = new Dictionary<String, String[]>();
 
             VoucherIssuedEvent voucherIssuedEvent = TestData.VoucherIssuedEvent;
 
-            eventHandlerConfiguration.Add(voucherIssuedEvent.GetType().FullName, new String[] { handlerTypeName });
+            eventHandlerConfiguration.Add(voucherIssuedEvent.GetType().Name, new String[] { handlerTypeName });
 
             Mock<IDomainEventHandler> domainEventHandler = new Mock<IDomainEventHandler>();
             Func<Type, IDomainEventHandler> createDomainEventHandlerFunc = (type) => { return domainEventHandler.Object; };

@@ -117,7 +117,7 @@ namespace VoucherManagement.Testing
 
         public static String Barcode = "1234567890";
 
-        public static VoucherIssuedEvent VoucherIssuedEvent = VoucherIssuedEvent.Create(TestData.VoucherId,
+        public static VoucherIssuedEvent VoucherIssuedEvent = new VoucherIssuedEvent(TestData.VoucherId,
                                                                                         TestData.EstateId,
                                                                                         TestData.IssuedDateTime,
                                                                                         TestData.RecipientEmail,

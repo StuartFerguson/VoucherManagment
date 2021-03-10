@@ -6,7 +6,9 @@
     using System.Threading.Tasks;
     using EstateReporting.Database;
     using Models;
+    using Shared.DomainDrivenDesign.EventSourcing;
     using Shared.EntityFramework;
+    using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventStore;
     using Shared.Exceptions;
     using VoucherAggregate;
@@ -27,7 +29,7 @@
         /// <summary>
         /// The voucher aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<VoucherAggregate> VoucherAggregateRepository;
+        private readonly IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> VoucherAggregateRepository;
 
         #endregion
 
@@ -39,7 +41,7 @@
         /// <param name="dbContextFactory">The database context factory.</param>
         /// <param name="voucherAggregateRepository">The voucher aggregate repository.</param>
         public VoucherManagementManager(IDbContextFactory<EstateReportingContext> dbContextFactory,
-                                        IAggregateRepository<VoucherAggregate> voucherAggregateRepository)
+                                        IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository)
         {
             this.DbContextFactory = dbContextFactory;
             this.VoucherAggregateRepository = voucherAggregateRepository;

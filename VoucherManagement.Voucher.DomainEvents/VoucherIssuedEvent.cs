@@ -1,107 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VoucherManagement.Voucher.DomainEvents
+﻿namespace VoucherManagement.Voucher.DomainEvents
 {
-    using System.Diagnostics.CodeAnalysis;
+    using System;
     using Newtonsoft.Json;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <seealso cref="Shared.DomainDrivenDesign.EventSourcing.DomainEvent" />
-    [JsonObject]
-    public class VoucherIssuedEvent : DomainEvent
+    public record VoucherIssuedEvent : DomainEventRecord.DomainEvent
     {
-        /// <summary>
-        /// Gets the estate identifier.
-        /// </summary>
-        /// <value>
-        /// The estate identifier.
-        /// </value>
-        [JsonProperty]
-        public Guid EstateId { get; private set; }
-
-        /// <summary>
-        /// Gets the voucher identifier.
-        /// </summary>
-        /// <value>
-        /// The voucher identifier.
-        /// </value>
-        [JsonProperty]
-        public Guid VoucherId { get; private set; }
-
-        /// <summary>
-        /// Gets the recipient email.
-        /// </summary>
-        /// <value>
-        /// The recipient email.
-        /// </value>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public String RecipientEmail { get; private set; }
-
-        /// <summary>
-        /// Gets the recipient mobile.
-        /// </summary>
-        /// <value>
-        /// The recipient mobile.
-        /// </value>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public String RecipientMobile { get; private set; }
-
-        /// <summary>
-        /// Gets the generated date time.
-        /// </summary>
-        /// <value>
-        /// The generated date time.
-        /// </value>
-        [JsonProperty]
-        public DateTime IssuedDateTime { get; private set; }
-
-        /// <summary>
-        /// Creates the specified aggregate identifier.
-        /// </summary>
-        /// <param name="aggregateId">The aggregate identifier.</param>
-        /// <param name="estateId">The estate identifier.</param>
-        /// <param name="issuedDateTime">The issued date time.</param>
-        /// <param name="recipientEmail">The recipient email.</param>
-        /// <param name="recipientMobile">The recipient mobile.</param>
-        /// <returns></returns>
-        public static VoucherIssuedEvent Create(Guid aggregateId,
-                                                Guid estateId,
-                                                DateTime issuedDateTime,
-                                                String recipientEmail,
-                                                String recipientMobile)
-        {
-            return new VoucherIssuedEvent(aggregateId, Guid.NewGuid(), estateId, issuedDateTime, recipientEmail, recipientMobile);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VoucherIssuedEvent"/> class.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        public VoucherIssuedEvent()
-        {
-
-        }
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoucherIssuedEvent" /> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
-        /// <param name="eventId">The event identifier.</param>
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="issuedDateTime">The issued date time.</param>
         /// <param name="recipientEmail">The recipient email.</param>
         /// <param name="recipientMobile">The recipient mobile.</param>
-        private VoucherIssuedEvent(Guid aggregateId,
-                                      Guid eventId,
-                                      Guid estateId,
-                                      DateTime issuedDateTime,
-                                      String recipientEmail,
-                                      String recipientMobile) : base(aggregateId, eventId)
+        public VoucherIssuedEvent(Guid aggregateId,
+                                  Guid estateId,
+                                  DateTime issuedDateTime,
+                                  String recipientEmail,
+                                  String recipientMobile) : base(aggregateId, Guid.NewGuid())
         {
             this.EstateId = estateId;
             this.VoucherId = aggregateId;
@@ -109,5 +28,53 @@ namespace VoucherManagement.Voucher.DomainEvents
             this.RecipientEmail = recipientEmail;
             this.RecipientMobile = recipientMobile;
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the estate identifier.
+        /// </summary>
+        /// <value>
+        /// The estate identifier.
+        /// </value>
+        public Guid EstateId { get; init; }
+
+        /// <summary>
+        /// Gets or sets the issued date time.
+        /// </summary>
+        /// <value>
+        /// The issued date time.
+        /// </value>
+        public DateTime IssuedDateTime { get; init; }
+
+        /// <summary>
+        /// Gets or sets the recipient email.
+        /// </summary>
+        /// <value>
+        /// The recipient email.
+        /// </value>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public String RecipientEmail { get; init; }
+
+        /// <summary>
+        /// Gets or sets the recipient mobile.
+        /// </summary>
+        /// <value>
+        /// The recipient mobile.
+        /// </value>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public String RecipientMobile { get; init; }
+
+        /// <summary>
+        /// Gets or sets the voucher identifier.
+        /// </summary>
+        /// <value>
+        /// The voucher identifier.
+        /// </value>
+        public Guid VoucherId { get; init; }
+
+        #endregion
     }
 }
