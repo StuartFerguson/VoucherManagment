@@ -5,6 +5,7 @@ using System.Text;
 namespace VoucherManagement.DataTransferObjects
 {
     using System.Diagnostics.CodeAnalysis;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// 
@@ -12,7 +13,7 @@ namespace VoucherManagement.DataTransferObjects
     [ExcludeFromCodeCoverage]
     public class GetVoucherResponse
     {
-        
+        [JsonProperty("voucher_id")]
         public Guid VoucherId { get;set;}
 
         /// <summary>
@@ -21,6 +22,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The expiry date.
         /// </value>
+        [JsonProperty("expiry_date")]
         public DateTime ExpiryDate { get; set; }
 
         /// <summary>
@@ -29,6 +31,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The value.
         /// </value>
+        [JsonProperty("value")]
         public Decimal Value { get; set; }
 
         /// <summary>
@@ -37,6 +40,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The balance.
         /// </value>
+        [JsonProperty("balance")]
         public Decimal Balance { get; set; }
 
         /// <summary>
@@ -45,6 +49,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The voucher code.
         /// </value>
+        [JsonProperty("voucher_code")]
         public String VoucherCode { get; set; }
 
         /// <summary>
@@ -53,6 +58,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         ///   <c>true</c> if this instance is generated; otherwise, <c>false</c>.
         /// </value>
+        [JsonProperty("is_generated")]
         public Boolean IsGenerated { get; set; }
 
         /// <summary>
@@ -61,6 +67,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         ///   <c>true</c> if this instance is issued; otherwise, <c>false</c>.
         /// </value>
+        [JsonProperty("is_issued")]
         public Boolean IsIssued { get; set; }
 
         /// <summary>
@@ -69,6 +76,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         ///   <c>true</c> if this instance is redeemed; otherwise, <c>false</c>.
         /// </value>
+        [JsonProperty("is_redeemed")]
         public Boolean IsRedeemed { get; set; }
 
         /// <summary>
@@ -77,6 +85,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The issued date time.
         /// </value>
+        [JsonProperty("issued_date_time")]
         public DateTime IssuedDateTime { get; set; }
         /// <summary>
         /// Gets or sets the generated date time.
@@ -84,6 +93,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The generated date time.
         /// </value>
+        [JsonProperty("generated_date_time")]
         public DateTime GeneratedDateTime { get; set; }
         /// <summary>
         /// Gets or sets the redeemed date time.
@@ -91,6 +101,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The redeemed date time.
         /// </value>
+        [JsonProperty("redeemed_date_time")]
         public DateTime RedeemedDateTime { get; set; }
 
         /// <summary>
@@ -99,6 +110,7 @@ namespace VoucherManagement.DataTransferObjects
         /// <value>
         /// The transaction identifier.
         /// </value>
+        [JsonProperty("transaction_id")]
         public Guid TransactionId { get; set; }
     }
 }
