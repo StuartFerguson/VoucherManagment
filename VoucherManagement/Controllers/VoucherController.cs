@@ -6,19 +6,21 @@
     using System.Threading.Tasks;
     using BusinessLogic.Manager;
     using Common;
+    using Common.Examples;
     using DataTransferObjects;
     using Factories;
     using MediatR;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Models;
+    using Swashbuckle.AspNetCore.Annotations;
+    using Swashbuckle.AspNetCore.Filters;
     using IssueVoucherResponse = Models.IssueVoucherResponse;
     using RedeemVoucherResponse = Models.RedeemVoucherResponse;
 
     [ExcludeFromCodeCoverage]
     [Route(VoucherController.ControllerRoute)]
     [ApiController]
-    [ApiVersion("1.0")]
     [Authorize]
     public class VoucherController : ControllerBase
     {
@@ -54,6 +56,9 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
+        [SwaggerRequestExample(typeof(IssueVoucherRequest), typeof(IssueVoucherRequestExample))]
+        [SwaggerResponse(201, "Created",typeof(IssueVoucherResponse))]
+        [SwaggerResponseExample(201, typeof(IssueVoucherResponseExample))]
         public async Task<IActionResult> IssueVoucher(IssueVoucherRequest issueVoucherRequest,
                                                       CancellationToken cancellationToken)
         {
@@ -88,6 +93,9 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]
+        [SwaggerRequestExample(typeof(IssueVoucherRequest), typeof(RedeemVoucherRequestExample))]
+        [SwaggerResponse(200, "OK", typeof(RedeemVoucherResponse))]
+        [SwaggerResponseExample(200, typeof(RedeemVoucherResponseExample))]
         public async Task<IActionResult> RedeemVoucher(RedeemVoucherRequest redeemVoucherRequest,
                                                       CancellationToken cancellationToken)
         {
@@ -113,6 +121,8 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
+        [SwaggerResponse(200, "OK", typeof(GetVoucherResponse))]
+        [SwaggerResponseExample(200, typeof(GetVoucherResponseExample))]
         public async Task<IActionResult> GetVoucherByCode([FromQuery] Guid estateId,
                                                           [FromQuery] String voucherCode,
                                                           CancellationToken cancellationToken)
