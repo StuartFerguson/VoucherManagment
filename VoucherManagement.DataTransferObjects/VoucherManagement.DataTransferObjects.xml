@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VoucherManagement.DataTransferObjects</name>
+    </assembly>
+    <members>
+        <member name="T:VoucherManagement.DataTransferObjects.GetVoucherResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.ExpiryDate">
+            <summary>
+            Gets the expiry date.
+            </summary>
+            <value>
+            The expiry date.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.Value">
+            <summary>
+            Gets the value.
+            </summary>
+            <value>
+            The value.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.Balance">
+            <summary>
+            Gets or sets the balance.
+            </summary>
+            <value>
+            The balance.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.VoucherCode">
+            <summary>
+            Gets the voucher code.
+            </summary>
+            <value>
+            The voucher code.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.IsGenerated">
+            <summary>
+            Gets or sets a value indicating whether this instance is generated.
+            </summary>
+            <value>
+              <c>true</c> if this instance is generated; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.IsIssued">
+            <summary>
+            Gets a value indicating whether this instance is issued.
+            </summary>
+            <value>
+              <c>true</c> if this instance is issued; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.IsRedeemed">
+            <summary>
+            Gets or sets a value indicating whether this instance is redeemed.
+            </summary>
+            <value>
+              <c>true</c> if this instance is redeemed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.IssuedDateTime">
+            <summary>
+            Gets or sets the issued date time.
+            </summary>
+            <value>
+            The issued date time.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.GeneratedDateTime">
+            <summary>
+            Gets or sets the generated date time.
+            </summary>
+            <value>
+            The generated date time.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.RedeemedDateTime">
+            <summary>
+            Gets or sets the redeemed date time.
+            </summary>
+            <value>
+            The redeemed date time.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.GetVoucherResponse.TransactionId">
+            <summary>
+            Gets or sets the transaction identifier.
+            </summary>
+            <value>
+            The transaction identifier.
+            </value>
+        </member>
+        <member name="T:VoucherManagement.DataTransferObjects.IssueVoucherRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.OperatorIdentifier">
+            <summary>
+            Gets or sets the operator identifier.
+            </summary>
+            <value>
+            The operator identifier.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.EstateId">
+            <summary>
+            Gets or sets the estate identifier.
+            </summary>
+            <value>
+            The estate identifier.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.TransactionId">
+            <summary>
+            Gets or sets the transaction identifier.
+            </summary>
+            <value>
+            The transaction identifier.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.Value">
+            <summary>
+            Gets or sets the value.
+            </summary>
+            <value>
+            The value.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.RecipientEmail">
+            <summary>
+            Gets or sets the recipient email.
+            </summary>
+            <value>
+            The recipient email.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.RecipientMobile">
+            <summary>
+            Gets or sets the recipient mobile.
+            </summary>
+            <value>
+            The recipient mobile.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherRequest.IssuedDateTime">
+            <summary>
+            Gets or sets the issued date time.
+            </summary>
+            <value>
+            The issued date time.
+            </value>
+        </member>
+        <member name="T:VoucherManagement.DataTransferObjects.IssueVoucherResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherResponse.VoucherId">
+            <summary>
+            Gets or sets the voucher identifier.
+            </summary>
+            <value>
+            The voucher identifier.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherResponse.ExpiryDate">
+            <summary>
+            Gets or sets the expiry date.
+            </summary>
+            <value>
+            The expiry date.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherResponse.VoucherCode">
+            <summary>
+            Gets or sets the voucher code.
+            </summary>
+            <value>
+            The voucher code.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.IssueVoucherResponse.Message">
+            <summary>
+            Gets or sets the message.
+            </summary>
+            <value>
+            The message.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.RedeemVoucherRequest.VoucherCode">
+            <summary>
+            Gets or sets the voucher code.
+            </summary>
+            <value>
+            The voucher code.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.RedeemVoucherRequest.EstateId">
+            <summary>
+            Gets or sets the estate identifier.
+            </summary>
+            <value>
+            The estate identifier.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.RedeemVoucherResponse.ExpiryDate">
+            <summary>
+            Gets or sets the expiry date.
+            </summary>
+            <value>
+            The expiry date.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.RedeemVoucherResponse.VoucherCode">
+            <summary>
+            Gets or sets the voucher code.
+            </summary>
+            <value>
+            The voucher code.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.DataTransferObjects.RedeemVoucherResponse.RemainingBalance">
+            <summary>
+            Gets or sets the remaining balance.
+            </summary>
+            <value>
+            The remaining balance.
+            </value>
+        </member>
+    </members>
+</doc>

@@ -56,8 +56,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPost]
-        [SwaggerRequestExample(typeof(IssueVoucherRequest), typeof(IssueVoucherRequestExample))]
-        [SwaggerResponse(201, "Created",typeof(IssueVoucherResponse))]
+        [SwaggerResponse(201, "Created", typeof(IssueVoucherResponse))]
         [SwaggerResponseExample(201, typeof(IssueVoucherResponseExample))]
         public async Task<IActionResult> IssueVoucher(IssueVoucherRequest issueVoucherRequest,
                                                       CancellationToken cancellationToken)
@@ -93,7 +92,6 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpPut]
-        [SwaggerRequestExample(typeof(IssueVoucherRequest), typeof(RedeemVoucherRequestExample))]
         [SwaggerResponse(200, "OK", typeof(RedeemVoucherResponse))]
         [SwaggerResponseExample(200, typeof(RedeemVoucherResponseExample))]
         public async Task<IActionResult> RedeemVoucher(RedeemVoucherRequest redeemVoucherRequest,

@@ -4,6 +4,8 @@ using System.Text;
 
 namespace VoucherManagement.Models
 {
+    using Newtonsoft.Json;
+
     public class IssueVoucherResponse
     {
         /// <summary>
@@ -12,6 +14,7 @@ namespace VoucherManagement.Models
         /// <value>
         /// The voucher identifier.
         /// </value>
+        [JsonProperty("voucher_id")]
         public Guid VoucherId { get; set; }
 
         /// <summary>
@@ -20,6 +23,7 @@ namespace VoucherManagement.Models
         /// <value>
         /// The expiry date.
         /// </value>
+        [JsonProperty("expiry_date")]
         public DateTime ExpiryDate { get; set; }
 
         /// <summary>
@@ -28,6 +32,7 @@ namespace VoucherManagement.Models
         /// <value>
         /// The voucher code.
         /// </value>
+        [JsonProperty("voucher_code")]
         public String VoucherCode { get; set; }
 
         /// <summary>
@@ -36,6 +41,7 @@ namespace VoucherManagement.Models
         /// <value>
         /// The message.
         /// </value>
+        [JsonProperty("message")]
         public String Message { get; set; }
     }
 }
