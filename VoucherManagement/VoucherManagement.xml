@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VoucherManagement</name>
+    </assembly>
+    <members>
+        <member name="M:VoucherManagement.Common.ClaimsHelper.GetUserClaim(System.Security.Claims.ClaimsPrincipal,System.String,System.String)">
+            <summary>
+            Gets the user claims.
+            </summary>
+            <param name="user">The user.</param>
+            <param name="customClaimType">Type of the custom claim.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException">No claim [{customClaimType}] found for user id [{userIdClaim.Value}</exception>
+        </member>
+        <member name="M:VoucherManagement.Common.ClaimsHelper.IsPasswordToken(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Determines whether [is client token] [the specified user].
+            </summary>
+            <param name="user">The user.</param>
+            <returns>
+              <c>true</c> if [is client token] [the specified user]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:VoucherManagement.Common.ClaimsHelper.ValidateRouteParameter``1(``0,System.Security.Claims.Claim)">
+            <summary>
+            Validates the route parameter.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="routeParameter">The route parameter.</param>
+            <param name="userClaim">The user claim.</param>
+        </member>
+        <member name="M:VoucherManagement.Common.ClaimsHelper.IsUserRolesValid(System.Security.Claims.ClaimsPrincipal,System.String[])">
+            <summary>
+            Determines whether [is user roles valid] [the specified user].
+            </summary>
+            <param name="user">The user.</param>
+            <param name="allowedRoles">The allowed roles.</param>
+            <returns>
+              <c>true</c> if [is user roles valid] [the specified user]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.ExampleData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.IsGenerated">
+            <summary>
+            The is generated
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.IsIssued">
+            <summary>
+            The is issued
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.IsRedeemed">
+            <summary>
+            The is redeemed
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.EstateId">
+            <summary>
+            The estate identifier
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.IssuedDateTime">
+            <summary>
+            The issued date time
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.GeneratedDateTime">
+            <summary>
+            The generated date time
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.RedeemedDateTime">
+            <summary>
+            The redeemed date time
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.OperatorIdentifier">
+            <summary>
+            The operator identifier
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.RecipientMobile">
+            <summary>
+            The recipient mobile
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.RecipientEmail">
+            <summary>
+            The recipient email
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.TransactionId">
+            <summary>
+            The transaction identifier
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.VoucherValue">
+            <summary>
+            The voucher value
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.RemainingBalance">
+            <summary>
+            The remaining balance
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.ExpiryDate">
+            <summary>
+            The expiry date
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.Message">
+            <summary>
+            The message
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.VoucherCode">
+            <summary>
+            The voucher code
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Common.Examples.ExampleData.VoucherId">
+            <summary>
+            The voucher identifier
+            </summary>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.GetVoucherResponseExample">
+            <summary>
+            
+            </summary>
+            <seealso cref="!:Swashbuckle.AspNetCore.Filters.IExamplesProvider&lt;VoucherManagement.DataTransferObjects.GetVoucherResponse&gt;" />
+        </member>
+        <member name="M:VoucherManagement.Common.Examples.GetVoucherResponseExample.GetExamples">
+            <summary>
+            Gets the examples.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.IssueVoucherRequestExample">
+            <summary>
+            
+            </summary>
+            <seealso cref="!:Swashbuckle.AspNetCore.Filters.IMultipleExamplesProvider&lt;VoucherManagement.DataTransferObjects.IssueVoucherRequest&gt;" />
+        </member>
+        <member name="M:VoucherManagement.Common.Examples.IssueVoucherRequestExample.GetExamples">
+            <summary>
+            Gets the examples.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.IssueVoucherResponseExample">
+            <summary>
+            
+            </summary>
+            <seealso cref="!:Swashbuckle.AspNetCore.Filters.IExamplesProvider&lt;VoucherManagement.DataTransferObjects.IssueVoucherResponse&gt;" />
+        </member>
+        <member name="M:VoucherManagement.Common.Examples.IssueVoucherResponseExample.GetExamples">
+            <summary>
+            Gets the examples.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.RedeemVoucherRequestExample">
+            <summary>
+            
+            </summary>
+            <seealso cref="!:Swashbuckle.AspNetCore.Filters.IExamplesProvider&lt;VoucherManagement.DataTransferObjects.RedeemVoucherRequest&gt;" />
+        </member>
+        <member name="M:VoucherManagement.Common.Examples.RedeemVoucherRequestExample.GetExamples">
+            <summary>
+            Gets the examples.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Common.Examples.RedeemVoucherResponseExample">
+            <summary>
+            
+            </summary>
+            <seealso cref="!:Swashbuckle.AspNetCore.Filters.IExamplesProvider&lt;VoucherManagement.DataTransferObjects.RedeemVoucherResponse&gt;" />
+        </member>
+        <member name="M:VoucherManagement.Common.Examples.RedeemVoucherResponseExample.GetExamples">
+            <summary>
+            Gets the examples.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Common.SwaggerDefaultValues">
+            <summary>
+            Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
+            </summary>
+            <remarks>This <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter"/> is only required due to bugs in the <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator"/>.
+            Once they are fixed and published, this class can be removed.</remarks>
+        </member>
+        <member name="M:VoucherManagement.Common.SwaggerDefaultValues.Apply(Microsoft.OpenApi.Models.OpenApiOperation,Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext)">
+            <summary>
+            Applies the filter to the specified operation using the given context.
+            </summary>
+            <param name="operation">The operation to apply the filter to.</param>
+            <param name="context">The current operation filter context.</param>
+        </member>
+        <member name="T:VoucherManagement.Common.SwaggerJsonConverter">
+            <summary>
+            
+            </summary>
+            <seealso cref="T:Newtonsoft.Json.JsonConverter" />
+        </member>
+        <member name="P:VoucherManagement.Common.SwaggerJsonConverter.CanRead">
+            <summary>
+            Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
+            </summary>
+            <value>
+              <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:VoucherManagement.Common.SwaggerJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns>
+              <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:VoucherManagement.Common.SwaggerJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the JSON representation of the object.
+            </summary>
+            <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value of object being read.</param>
+            <param name="serializer">The calling serializer.</param>
+            <returns>
+            The object value.
+            </returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:VoucherManagement.Common.SwaggerJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the JSON representation of the object.
+            </summary>
+            <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The calling serializer.</param>
+        </member>
+        <member name="T:VoucherManagement.Controllers.DomainEventController">
+            <summary>
+            
+            </summary>
+            <seealso cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+        </member>
+        <member name="F:VoucherManagement.Controllers.DomainEventController.DomainEventHandlerResolver">
+            <summary>
+            The domain event handler resolver
+            </summary>
+        </member>
+        <member name="M:VoucherManagement.Controllers.DomainEventController.#ctor(Shared.EventStore.EventHandling.IDomainEventHandlerResolver)">
+            <summary>
+            Initializes a new instance of the <see cref="T:VoucherManagement.Controllers.DomainEventController" /> class.
+            </summary>
+            <param name="domainEventHandlerResolver">The domain event handler resolver.</param>
+        </member>
+        <member name="M:VoucherManagement.Controllers.DomainEventController.PostEventAsync(System.Object,System.Threading.CancellationToken)">
+            <summary>
+            Posts the event asynchronous.
+            </summary>
+            <param name="request">The request.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Controllers.DomainEventController.Callback(System.Threading.CancellationToken,System.Guid)">
+            <summary>
+            Callbacks the specified cancellation token.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <param name="eventId">The event identifier.</param>
+        </member>
+        <member name="M:VoucherManagement.Controllers.DomainEventController.GetDomainEvent(System.Object)">
+            <summary>
+            Gets the domain event.
+            </summary>
+            <param name="domainEvent">The domain event.</param>
+            <returns></returns>
+        </member>
+        <member name="F:VoucherManagement.Controllers.DomainEventController.ControllerName">
+            <summary>
+            The controller name
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Controllers.DomainEventController.ControllerRoute">
+            <summary>
+            The controller route
+            </summary>
+        </member>
+        <member name="M:VoucherManagement.Controllers.VoucherController.IssueVoucher(VoucherManagement.DataTransferObjects.IssueVoucherRequest,System.Threading.CancellationToken)">
+            <summary>
+            Issues the voucher.
+            </summary>
+            <param name="issueVoucherRequest">The issue voucher request.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Controllers.VoucherController.RedeemVoucher(VoucherManagement.DataTransferObjects.RedeemVoucherRequest,System.Threading.CancellationToken)">
+            <summary>
+            Redeems the voucher.
+            </summary>
+            <param name="redeemVoucherRequest">The redeem voucher request.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Controllers.VoucherController.GetVoucherByCode(System.Guid,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Gets the voucher by code.
+            </summary>
+            <param name="estateId">The estate identifier.</param>
+            <param name="voucherCode">The voucher code.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns></returns>
+        </member>
+        <member name="F:VoucherManagement.Controllers.VoucherController.ControllerName">
+            <summary>
+            The controller name
+            </summary>
+        </member>
+        <member name="F:VoucherManagement.Controllers.VoucherController.ControllerRoute">
+            <summary>
+            The controller route
+            </summary>
+        </member>
+        <member name="T:VoucherManagement.Factories.IModelFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:VoucherManagement.Factories.IModelFactory.ConvertFrom(VoucherManagement.Models.IssueVoucherResponse)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="issueVoucherResponse">The issue voucher response.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Factories.IModelFactory.ConvertFrom(VoucherManagement.Models.Voucher)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="voucherModel">The voucher model.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Factories.IModelFactory.ConvertFrom(VoucherManagement.Models.RedeemVoucherResponse)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="redeemVoucherResponse">The redeem voucher response.</param>
+            <returns></returns>
+        </member>
+        <member name="T:VoucherManagement.Factories.ModelFactory">
+            <summary>
+            
+            </summary>
+            <seealso cref="T:VoucherManagement.Factories.IModelFactory" />
+        </member>
+        <member name="M:VoucherManagement.Factories.ModelFactory.ConvertFrom(VoucherManagement.Models.IssueVoucherResponse)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="issueVoucherResponse">The issue voucher response.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Factories.ModelFactory.ConvertFrom(VoucherManagement.Models.Voucher)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="voucherModel">The voucher model.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Factories.ModelFactory.ConvertFrom(VoucherManagement.Models.RedeemVoucherResponse)">
+            <summary>
+            Converts from.
+            </summary>
+            <param name="redeemVoucherResponse">The redeem voucher response.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VoucherManagement.Program.Worker_TraceGenerated(System.String,Microsoft.Extensions.Logging.LogLevel)">
+            <summary>
+            Workers the trace generated.
+            </summary>
+            <param name="trace">The trace.</param>
+            <param name="logLevel">The log level.</param>
+        </member>
+        <member name="P:VoucherManagement.Startup.Configuration">
+            <summary>
+            Gets or sets the configuration.
+            </summary>
+            <value>
+            The configuration.
+            </value>
+        </member>
+        <member name="P:VoucherManagement.Startup.WebHostEnvironment">
+            <summary>
+            Gets or sets the web host environment.
+            </summary>
+            <value>
+            The web host environment.
+            </value>
+        </member>
+        <member name="M:VoucherManagement.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Configures the services.
+            </summary>
+            <param name="services">The services.</param>
+        </member>
+        <member name="M:VoucherManagement.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Configures the specified application.
+            </summary>
+            <param name="app">The application.</param>
+            <param name="env">The env.</param>
+            <param name="loggerFactory">The logger factory.</param>
+            <param name="provider">The provider.</param>
+        </member>
+        <member name="F:VoucherManagement.Startup.EventStoreClientSettings">
+            <summary>
+            The event store client settings
+            </summary>
+        </member>
+        <member name="M:VoucherManagement.Startup.ConfigureEventStoreSettings(EventStore.Client.EventStoreClientSettings)">
+            <summary>
+            Configures the event store settings.
+            </summary>
+            <param name="settings">The settings.</param>
+        </member>
+    </members>
+</doc>

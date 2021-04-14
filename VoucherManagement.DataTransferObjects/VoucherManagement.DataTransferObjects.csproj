@@ -5,6 +5,10 @@
 	  <DebugType>None</DebugType>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+    <DocumentationFile>D:\Projects\StuartFerguson\VoucherManagment\VoucherManagement.DataTransferObjects\VoucherManagement.DataTransferObjects.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
