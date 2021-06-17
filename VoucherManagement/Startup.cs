@@ -142,7 +142,18 @@ namespace VoucherManagement
                                                                          return ConfigurationReader.GetBaseServerUri(serviceName).OriginalString;
                                                                      });
 
-            services.AddSingleton<HttpClient>();
+            HttpClientHandler httpClientHandler = new HttpClientHandler
+                                                  {
+                                                      ServerCertificateCustomValidationCallback = (message,
+                                                                                                   certificate2,
+                                                                                                   arg3,
+                                                                                                   arg4) =>
+                                                                                                  {
+                                                                                                      return true;
+                                                                                                  }
+                                                  };
+            HttpClient httpClient = new HttpClient(httpClientHandler);
+            services.AddSingleton<HttpClient>(httpClient);
             services.AddSingleton<IEstateClient, EstateClient>();
             services.AddSingleton<ISecurityServiceClient, SecurityServiceClient>();
             services.AddSingleton<IFileSystem, FileSystem>();
