@@ -14,6 +14,11 @@ COPY . .
 WORKDIR "/src/VoucherManagement"
 RUN dotnet build "VoucherManagement.csproj" -c Release -o /app/build
 
+# Sort out certificate stuff here
+RUN openssl x509 -inform DER -in /src/VoucherManagement/aspnetapp-root-cert.cer -out /src/VoucherManagement/aspnetapp-root-cert.crt
+RUN cp /src/VoucherManagement/aspnetapp-root-cert.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+
 FROM build AS publish
 RUN dotnet publish "VoucherManagement.csproj" -c Release -o /app/publish
 
