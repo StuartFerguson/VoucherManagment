@@ -59,8 +59,39 @@ namespace VoucherManagement
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        static void DirSearch(string sDir,
+                              Action<String> loggerAction)
+        {
+            try
+            {
+                foreach (string d in Directory.GetDirectories(sDir))
+                {
+                    foreach (string f in Directory.GetFiles(d))
+                    {
+                        loggerAction(f);
+                    }
+
+                    DirSearch(d, loggerAction);
+                }
+            }
+            catch(System.Exception excpt)
+            {
+                loggerAction(excpt.Message);
+            }
+        }
+
         public Startup(IWebHostEnvironment webHostEnvironment)
         {
+            Action<String> loggerAction = message =>
+                                          {
+                                              using (StreamWriter sw = new StreamWriter("/home/txnproc/configlog.log", true))
+                                              {
+                                                  sw.WriteLine(message);
+                                              }
+                                          };
+
+            //DirSearch("/home/txnproc", loggerAction);
+
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(webHostEnvironment.ContentRootPath)
                                                                       .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
                                                                       .AddJsonFile($"/home/txnproc/config/appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true)
@@ -70,6 +101,9 @@ namespace VoucherManagement
 
             Startup.Configuration = builder.Build();
             Startup.WebHostEnvironment = webHostEnvironment;
+
+            
+            //Startup.Configuration.LogConfiguration(loggerAction);
         }
 
         /// <summary>
@@ -102,8 +136,6 @@ namespace VoucherManagement
             this.ConfigureMiddlewareServices(services);
 
             services.AddTransient<IMediator, Mediator>();
-
-            ConfigurationReader.Initialise(Startup.Configuration);
 
             String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");
             String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
@@ -196,32 +228,32 @@ namespace VoucherManagement
 
         private void ConfigureMiddlewareServices(IServiceCollection services)
         {
-            services.AddHealthChecks()
-                    //.AddEventStore(Startup.EventStoreClientSettings,
-                    //               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
-                    //               name: "Eventstore",
-                    //               failureStatus: HealthStatus.Unhealthy,
-                    //               tags: new string[] { "db", "eventstore" })
-                    .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
-                                  healthQuery: "SELECT 1;",
-                                  name: "Read Model Server",
-                                  failureStatus: HealthStatus.Degraded,
-                                  tags: new string[] { "db", "sql", "sqlserver" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "MessagingServiceApi")}/health"),
-                                 name: "Messaging Service",
-                                 httpMethod: HttpMethod.Get,
-                                 failureStatus: HealthStatus.Unhealthy,
-                                 tags: new string[] { "messaging", "email" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "EstateManagementApi")}/health"),
-                                 name: "Estate Management Service",
-                                 httpMethod: HttpMethod.Get,
-                                 failureStatus: HealthStatus.Unhealthy,
-                                 tags: new string[] { "application", "estatemanagement" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
-                                 name:"Security Service",
-                                 httpMethod:HttpMethod.Get,
-                                 failureStatus:HealthStatus.Unhealthy,
-                                 tags:new string[] {"security", "authorisation"});
+            //services.AddHealthChecks()
+            //        //.AddEventStore(Startup.EventStoreClientSettings,
+            //        //               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
+            //        //               name: "Eventstore",
+            //        //               failureStatus: HealthStatus.Unhealthy,
+            //        //               tags: new string[] { "db", "eventstore" })
+            //        .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
+            //                      healthQuery: "SELECT 1;",
+            //                      name: "Read Model Server",
+            //                      failureStatus: HealthStatus.Degraded,
+            //                      tags: new string[] { "db", "sql", "sqlserver" })
+            //        .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "MessagingServiceApi")}/health"),
+            //                     name: "Messaging Service",
+            //                     httpMethod: HttpMethod.Get,
+            //                     failureStatus: HealthStatus.Unhealthy,
+            //                     tags: new string[] { "messaging", "email" })
+            //        .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "EstateManagementApi")}/health"),
+            //                     name: "Estate Management Service",
+            //                     httpMethod: HttpMethod.Get,
+            //                     failureStatus: HealthStatus.Unhealthy,
+            //                     tags: new string[] { "application", "estatemanagement" })
+            //        .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
+            //                     name:"Security Service",
+            //                     httpMethod:HttpMethod.Get,
+            //                     failureStatus:HealthStatus.Unhealthy,
+            //                     tags:new string[] {"security", "authorisation"});
 
             
             services.AddSwaggerGen(c =>
