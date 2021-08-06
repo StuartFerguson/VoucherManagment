@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM stuartferguson/txnprocbase:latest AS base
 RUN apt-get update
 RUN apt-get install -y apt-utils
 RUN apt-get install -y libgdiplus
