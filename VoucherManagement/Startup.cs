@@ -59,39 +59,8 @@ namespace VoucherManagement
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        static void DirSearch(string sDir,
-                              Action<String> loggerAction)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(sDir))
-                {
-                    foreach (string f in Directory.GetFiles(d))
-                    {
-                        loggerAction(f);
-                    }
-
-                    DirSearch(d, loggerAction);
-                }
-            }
-            catch(System.Exception excpt)
-            {
-                loggerAction(excpt.Message);
-            }
-        }
-
         public Startup(IWebHostEnvironment webHostEnvironment)
         {
-            Action<String> loggerAction = message =>
-                                          {
-                                              using (StreamWriter sw = new StreamWriter("/home/txnproc/configlog.log", true))
-                                              {
-                                                  sw.WriteLine(message);
-                                              }
-                                          };
-
-            DirSearch("/home/txnproc", loggerAction);
-
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(webHostEnvironment.ContentRootPath)
                                                                       .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
                                                                       .AddJsonFile($"/home/txnproc/config/appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true)
@@ -101,9 +70,6 @@ namespace VoucherManagement
 
             Startup.Configuration = builder.Build();
             Startup.WebHostEnvironment = webHostEnvironment;
-
-            
-            //Startup.Configuration.LogConfiguration(loggerAction);
         }
 
         /// <summary>
