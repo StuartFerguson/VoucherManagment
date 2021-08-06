@@ -62,8 +62,11 @@ namespace VoucherManagement
         public Startup(IWebHostEnvironment webHostEnvironment)
         {
             IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(webHostEnvironment.ContentRootPath)
+                                                                      .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
+                                                                      .AddJsonFile($"/home/txnproc/config/appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true)
                                                                       .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                                                                      .AddJsonFile($"appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true).AddEnvironmentVariables();
+                                                                      .AddJsonFile($"appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                                                                      .AddEnvironmentVariables();
 
             Startup.Configuration = builder.Build();
             Startup.WebHostEnvironment = webHostEnvironment;
@@ -99,8 +102,6 @@ namespace VoucherManagement
             this.ConfigureMiddlewareServices(services);
 
             services.AddTransient<IMediator, Mediator>();
-
-            ConfigurationReader.Initialise(Startup.Configuration);
 
             String connString = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString");
             String connectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
@@ -215,12 +216,12 @@ namespace VoucherManagement
                                  failureStatus: HealthStatus.Unhealthy,
                                  tags: new string[] { "application", "estatemanagement" })
                     .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
-                                 name:"Security Service",
-                                 httpMethod:HttpMethod.Get,
-                                 failureStatus:HealthStatus.Unhealthy,
-                                 tags:new string[] {"security", "authorisation"});
+                                 name: "Security Service",
+                                 httpMethod: HttpMethod.Get,
+                                 failureStatus: HealthStatus.Unhealthy,
+                                 tags: new string[] { "security", "authorisation" });
 
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -315,6 +316,12 @@ namespace VoucherManagement
             ILogger logger = loggerFactory.CreateLogger("VoucherManagement");
 
             Logger.Initialise(logger);
+
+            Action<String> loggerAction = message =>
+                                          {
+                                              Logger.LogInformation(message);
+                                          };
+            Startup.Configuration.LogConfiguration(loggerAction);
 
             app.AddRequestLogging();
             app.AddResponseLogging();
