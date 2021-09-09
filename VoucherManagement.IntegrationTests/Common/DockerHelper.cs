@@ -246,7 +246,8 @@ namespace VoucherManagement.IntegrationTests.Common
                                                                                                               "vouchermanagement",
                                                                                                               new List<INetworkService>
                                                                                                               {
-                                                                                                                  testNetwork
+                                                                                                                  testNetwork,
+                                                                                                                  Setup.DatabaseServerNetwork
                                                                                                               },
                                                                                                               traceFolder,
                                                                                                               dockerCredentials,
@@ -327,6 +328,7 @@ namespace VoucherManagement.IntegrationTests.Common
                 await client.CreateAsync("$ce-EstateAggregate", "Reporting", settings);
                 await client.CreateAsync("$ce-MerchantAggregate", "Reporting", settings);
                 await client.CreateAsync("$ce-ContractAggregate", "Reporting", settings);
+                await client.CreateAsync("$ce-VoucherAggregate", "Reporting", settings);
             }
         }
 
