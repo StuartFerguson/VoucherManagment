@@ -410,6 +410,7 @@ namespace VoucherManagement.IntegrationTests.Shared
             }
         }
 
+        [Given(@"I issue the following vouchers")]
         [When(@"I issue the following vouchers")]
         public async Task WhenIIssueTheFollowingVouchers(Table table)
         {
@@ -431,7 +432,30 @@ namespace VoucherManagement.IntegrationTests.Shared
                                                           .ConfigureAwait(false);
 
                 response.VoucherId.ShouldNotBe(Guid.Empty);
+
+                this.TestingContext.AddVoucher((request,response));
             }
+        }
+
+        [When(@"I redeem the voucher for transaction Id '(.*)' the voucher balance will be (.*)")]
+        public async Task WhenIRedeemTheVoucherForTransactionIdTheVoucherBalanceWillBe(Guid transactionId, Decimal balance)
+        {
+            (IssueVoucherRequest request, IssueVoucherResponse response) voucher = this.TestingContext.GetVoucherByTransactionId(transactionId);
+
+            RedeemVoucherRequest redeemVoucherRequest = new RedeemVoucherRequest
+                                                        {
+                                                            EstateId = voucher.request.EstateId,
+                                                            RedeemedDateTime = DateTime.Now,
+                                                            VoucherCode = voucher.response.VoucherCode
+                                                        };
+            // Do the redeem
+            await Retry.For(async () =>
+                            {
+                                RedeemVoucherResponse response = await this.TestingContext.DockerHelper.VoucherManagementClient
+                                                                           .RedeemVoucher(this.TestingContext.AccessToken, redeemVoucherRequest, CancellationToken.None)
+                                                                           .ConfigureAwait(false);
+                                response.RemainingBalance.ShouldBe(balance);
+                            });
         }
 
     }

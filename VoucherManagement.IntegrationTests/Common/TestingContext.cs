@@ -5,6 +5,7 @@ using System.Text;
 namespace VoucherManagement.IntegrationTests.Common
 {
     using System.Linq;
+    using DataTransferObjects;
     using global::Shared.Logger;
     using Shouldly;
     using TechTalk.SpecFlow;
@@ -23,6 +24,11 @@ namespace VoucherManagement.IntegrationTests.Common
         /// </summary>
         private readonly List<EstateDetails> Estates;
 
+        /// <summary>
+        /// The vouchers
+        /// </summary>
+        private readonly List<(IssueVoucherRequest request, IssueVoucherResponse response)> Vouchers;
+
         #endregion
 
         #region Constructors
@@ -34,6 +40,7 @@ namespace VoucherManagement.IntegrationTests.Common
         {
             this.Estates = new List<EstateDetails>();
             this.Clients = new List<ClientDetails>();
+            this.Vouchers = new List<(IssueVoucherRequest request, IssueVoucherResponse response)>();
         }
 
         #endregion
@@ -165,6 +172,18 @@ namespace VoucherManagement.IntegrationTests.Common
             estateDetails.ShouldNotBeNull();
 
             return estateDetails;
+        }
+
+        public void AddVoucher((IssueVoucherRequest request, IssueVoucherResponse response) voucher)
+        {
+            this.Vouchers.Add(voucher);
+        }
+
+        public (IssueVoucherRequest request, IssueVoucherResponse response) GetVoucherByTransactionId(Guid transactionId)
+        {
+            (IssueVoucherRequest request, IssueVoucherResponse response) voucher = this.Vouchers.Where(v => v.request.TransactionId == transactionId).SingleOrDefault();
+
+            return voucher;
         }
 
         #endregion
