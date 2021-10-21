@@ -196,16 +196,16 @@ namespace VoucherManagement.IntegrationTests.RedeemVoucher
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Redemm Vouchers")]
+        [Xunit.SkippableFactAttribute(DisplayName="Redeem Vouchers")]
         [Xunit.TraitAttribute("FeatureTitle", "RedeemVoucher")]
-        [Xunit.TraitAttribute("Description", "Redemm Vouchers")]
+        [Xunit.TraitAttribute("Description", "Redeem Vouchers")]
         [Xunit.TraitAttribute("Category", "PRTest")]
-        public virtual void RedemmVouchers()
+        public virtual void RedeemVouchers()
         {
             string[] tagsOfScenario = new string[] {
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Redemm Vouchers", null, tagsOfScenario, argumentsOfScenario);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Redeem Vouchers", null, tagsOfScenario, argumentsOfScenario);
 #line 40
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
