@@ -68,6 +68,15 @@ namespace VoucherManagement.IntegrationTests.Shared
             foreach (TableRow tableRow in table.Rows)
             {
                 String estateName = SpecflowTableHelper.GetStringRowValue(tableRow, "EstateName");
+                // Setup the subscriptions for the estate
+                await Retry.For(async () => { await this.TestingContext.DockerHelper.PopulateSubscriptionServiceConfiguration(estateName).ConfigureAwait(false); },
+                                retryFor: TimeSpan.FromMinutes(2),
+                                retryInterval: TimeSpan.FromSeconds(30));
+            }
+
+            foreach (TableRow tableRow in table.Rows)
+            {
+                String estateName = SpecflowTableHelper.GetStringRowValue(tableRow, "EstateName");
 
                 CreateEstateRequest createEstateRequest = new CreateEstateRequest
                 {
@@ -80,25 +89,20 @@ namespace VoucherManagement.IntegrationTests.Shared
                 response.ShouldNotBeNull();
                 response.EstateId.ShouldNotBe(Guid.Empty);
 
-                // Cache the estate id
-                this.TestingContext.AddEstateDetails(response.EstateId, estateName);
-
                 this.TestingContext.Logger.LogInformation($"Estate {estateName} created with Id {response.EstateId}");
-            }
-
-            foreach (TableRow tableRow in table.Rows)
-            {
-                EstateDetails estateDetails = this.TestingContext.GetEstateDetails(tableRow);
 
                 EstateResponse estate = null;
                 await Retry.For(async () =>
                 {
                     estate = await this.TestingContext.DockerHelper.EstateClient
-                                       .GetEstate(this.TestingContext.AccessToken, estateDetails.EstateId, CancellationToken.None).ConfigureAwait(false);
+                                       .GetEstate(this.TestingContext.AccessToken, response.EstateId, CancellationToken.None).ConfigureAwait(false);
                     estate.ShouldNotBeNull();
-                }).ConfigureAwait(false);
 
-                estate.EstateName.ShouldBe(estateDetails.EstateName);
+                    // Cache the estate id
+                    this.TestingContext.AddEstateDetails(estate.EstateId, estate.EstateName, estate.EstateReference);
+                }, TimeSpan.FromMinutes(3), TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+
+                estate.EstateName.ShouldBe(estateName);
             }
         }
 
