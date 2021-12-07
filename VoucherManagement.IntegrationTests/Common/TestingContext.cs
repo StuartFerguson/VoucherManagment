@@ -94,9 +94,10 @@ namespace VoucherManagement.IntegrationTests.Common
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="estateName">Name of the estate.</param>
         public void AddEstateDetails(Guid estateId,
-                                     String estateName)
+                                     String estateName,
+                                     String estateReference)
         {
-            this.Estates.Add(EstateDetails.Create(estateId, estateName));
+            this.Estates.Add(EstateDetails.Create(estateId, estateName, estateReference));
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace VoucherManagement.IntegrationTests.Common
 
             if (estateDetails == null && estateName == "InvalidEstate")
             {
-                estateDetails = EstateDetails.Create(Guid.Parse("79902550-64DF-4491-B0C1-4E78943928A3"), estateName);
+                estateDetails = EstateDetails.Create(Guid.Parse("79902550-64DF-4491-B0C1-4E78943928A3"), estateName, "");
                 estateDetails.AddMerchant(Guid.Parse("36AA0109-E2E3-4049-9575-F507A887BB1F"), "Test Merchant 1");
                 this.Estates.Add(estateDetails);
             }

@@ -12,11 +12,13 @@ using System.Threading.Tasks;
 
 namespace VoucherManagement
 {
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.IO.Abstractions;
     using System.Net.Http;
     using System.Reflection;
+    using System.Threading;
     using System.Xml;
     using BusinessLogic;
     using BusinessLogic.EventHandling;
@@ -48,12 +50,14 @@ namespace VoucherManagement
     using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventHandling;
     using Shared.EventStore.EventStore;
+    using Shared.EventStore.SubscriptionWorker;
     using Shared.Extensions;
     using Shared.General;
     using Shared.Logger;
     using Shared.Repositories;
     using Swashbuckle.AspNetCore.Filters;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using Voucher.DomainEvents;
     using ILogger = Microsoft.Extensions.Logging.ILogger;
 
     [ExcludeFromCodeCoverage]
@@ -87,6 +91,8 @@ namespace VoucherManagement
         /// The web host environment.
         /// </value>
         public static IWebHostEnvironment WebHostEnvironment { get; set; }
+
+        public static IServiceProvider ServiceProvider { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         /// <summary>
@@ -129,14 +135,25 @@ namespace VoucherManagement
                 services.AddSingleton<IConnectionStringConfigurationRepository, ConfigurationReaderConnectionStringRepository>();
             }
 
-            services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
+            services.AddSingleton<Func<String, EstateReportingGenericContext>>(cont => (connectionString) =>
+                                                                                       {
+                                                                                           String databaseEngine =
+                                                                                               ConfigurationReader.GetValue("AppSettings", "DatabaseEngine");
+
+                                                                                           return databaseEngine switch
+                                                                                           {
+                                                                                               "MySql" => new EstateReportingMySqlContext(connectionString),
+                                                                                               "SqlServer" => new EstateReportingSqlServerContext(connectionString),
+                                                                                               _ => throw new
+                                                                                                   NotSupportedException($"Unsupported Database Engine {databaseEngine}")
+                                                                                           };
+                                                                                       });
 
             services.AddTransient<IEventStoreContext, EventStoreContext>();
             services.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>, AggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>>();
             services.AddSingleton<IVoucherDomainService, VoucherDomainService>();
             services.AddSingleton<IVoucherManagementManager, VoucherManagementManager>();
             services.AddSingleton<Factories.IModelFactory, Factories.ModelFactory>();
-            services.AddSingleton<Func<String, EstateReportingContext>>(cont => (connectionString) => { return new EstateReportingContext(connectionString); });
 
             services.AddSingleton<Func<String, String>>(container => (serviceName) =>
                                                                      {
@@ -158,7 +175,7 @@ namespace VoucherManagement
             services.AddSingleton<IEstateClient, EstateClient>();
             services.AddSingleton<ISecurityServiceClient, SecurityServiceClient>();
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<IDbContextFactory<EstateReportingContext>, DbContextFactory<EstateReportingContext>>();
+            services.AddSingleton<IDbContextFactory<EstateReportingGenericContext>, DbContextFactory<EstateReportingGenericContext>>();
             // request & notification handlers
             services.AddTransient<ServiceFactory>(context =>
                                                   {
@@ -190,6 +207,8 @@ namespace VoucherManagement
             services.AddSingleton<VoucherDomainEventHandler>();
             services.AddSingleton<IDomainEventHandlerResolver, DomainEventHandlerResolver>();
             services.AddSingleton<IMessagingServiceClient, MessagingServiceClient>();
+
+            Startup.ServiceProvider = services.BuildServiceProvider();
         }
 
         private void ConfigureMiddlewareServices(IServiceCollection services)
@@ -345,6 +364,8 @@ namespace VoucherManagement
             app.UseSwagger();
 
             app.UseSwaggerUI();
+
+            app.PreWarm();
         }
 
         /// <summary>
@@ -373,15 +394,105 @@ namespace VoucherManagement
                                                                                                      errors) => true,
                                                           }
             };
-            settings.ConnectionName = Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionName");
+
             settings.ConnectivitySettings = new EventStoreClientConnectivitySettings
             {
+                Insecure = Startup.Configuration.GetValue<Boolean>("EventStoreSettings:Insecure"),
                 Address = new Uri(Startup.Configuration.GetValue<String>("EventStoreSettings:ConnectionString")),
             };
 
             settings.DefaultCredentials = new UserCredentials(Startup.Configuration.GetValue<String>("EventStoreSettings:UserName"),
                                                               Startup.Configuration.GetValue<String>("EventStoreSettings:Password"));
             Startup.EventStoreClientSettings = settings;
+        }
+
+        public static void LoadTypes()
+        {
+            VoucherIssuedEvent i = new VoucherIssuedEvent(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, "", ""); 
+
+            TypeProvider.LoadDomainEventsTypeDynamically();
+        }
+    }
+
+    public static class Extensions
+    {
+        static Action<TraceEventType, String, String> log = (tt, subType, message) => {
+            String logMessage = $"{subType} - {message}";
+            switch (tt)
+            {
+                case TraceEventType.Critical:
+                    Logger.LogCritical(new Exception(logMessage));
+                    break;
+                case TraceEventType.Error:
+                    Logger.LogError(new Exception(logMessage));
+                    break;
+                case TraceEventType.Warning:
+                    Logger.LogWarning(logMessage);
+                    break;
+                case TraceEventType.Information:
+                    Logger.LogInformation(logMessage);
+                    break;
+                case TraceEventType.Verbose:
+                    Logger.LogDebug(logMessage);
+                    break;
+            }
+        };
+
+        static Action<TraceEventType, String> concurrentLog = (tt, message) => log(tt, "CONCURRENT", message);
+
+        public static void PreWarm(this IApplicationBuilder applicationBuilder)
+        {
+            Startup.LoadTypes();
+
+            //SubscriptionWorker worker = new SubscriptionWorker()
+            var internalSubscriptionService = Boolean.Parse(ConfigurationReader.GetValue("InternalSubscriptionService"));
+
+            if (internalSubscriptionService)
+            {
+                String eventStoreConnectionString = ConfigurationReader.GetValue("EventStoreSettings", "ConnectionString");
+                Int32 inflightMessages = Int32.Parse(ConfigurationReader.GetValue("AppSettings", "InflightMessages"));
+                Int32 persistentSubscriptionPollingInSeconds = Int32.Parse(ConfigurationReader.GetValue("AppSettings", "PersistentSubscriptionPollingInSeconds"));
+                String filter = ConfigurationReader.GetValue("AppSettings", "InternalSubscriptionServiceFilter");
+                String ignore = ConfigurationReader.GetValue("AppSettings", "InternalSubscriptionServiceIgnore");
+                String streamName = ConfigurationReader.GetValue("AppSettings", "InternalSubscriptionFilterOnStreamName");
+                Int32 cacheDuration = Int32.Parse(ConfigurationReader.GetValue("AppSettings", "InternalSubscriptionServiceCacheDuration"));
+
+                ISubscriptionRepository subscriptionRepository = SubscriptionRepository.Create(eventStoreConnectionString, cacheDuration);
+
+                ((SubscriptionRepository)subscriptionRepository).Trace += (sender, s) => Extensions.log(TraceEventType.Information, "REPOSITORY", s);
+
+                // init our SubscriptionRepository
+                subscriptionRepository.PreWarm(CancellationToken.None).Wait();
+
+                var eventHandlerResolver = Startup.ServiceProvider.GetService<IDomainEventHandlerResolver>();
+
+                SubscriptionWorker concurrentSubscriptions = SubscriptionWorker.CreateConcurrentSubscriptionWorker(eventStoreConnectionString, eventHandlerResolver, subscriptionRepository, inflightMessages, persistentSubscriptionPollingInSeconds);
+
+                concurrentSubscriptions.Trace += (_, args) => concurrentLog(TraceEventType.Information, args.Message);
+                concurrentSubscriptions.Warning += (_, args) => concurrentLog(TraceEventType.Warning, args.Message);
+                concurrentSubscriptions.Error += (_, args) => concurrentLog(TraceEventType.Error, args.Message);
+
+                if (!String.IsNullOrEmpty(ignore))
+                {
+                    concurrentSubscriptions = concurrentSubscriptions.IgnoreSubscriptions(ignore);
+                }
+
+                if (!String.IsNullOrEmpty(filter))
+                {
+                    //NOTE: Not overly happy with this design, but
+                    //the idea is if we supply a filter, this overrides ignore
+                    concurrentSubscriptions = concurrentSubscriptions.FilterSubscriptions(filter)
+                                                                     .IgnoreSubscriptions(null);
+
+                }
+
+                if (!String.IsNullOrEmpty(streamName))
+                {
+                    concurrentSubscriptions = concurrentSubscriptions.FilterByStreamName(streamName);
+                }
+
+                concurrentSubscriptions.StartAsync(CancellationToken.None).Wait();
+            }
         }
     }
 }

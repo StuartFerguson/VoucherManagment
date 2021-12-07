@@ -45,23 +45,7 @@ namespace VoucherManagement
                                                      webBuilder.UseConfiguration(config);
                                                      webBuilder.UseKestrel();
                                                  });
-            hostBuilder.ConfigureServices(services =>
-                                          {
-                                              VoucherIssuedEvent i = new VoucherIssuedEvent(Guid.NewGuid(), Guid.NewGuid(), DateTime.Now, "", ""); 
 
-                                              TypeProvider.LoadDomainEventsTypeDynamically();
-
-                                              services.AddHostedService<SubscriptionWorker>(provider =>
-                                                                                            {
-                                                                                                IDomainEventHandlerResolver r =
-                                                                                                    provider.GetRequiredService<IDomainEventHandlerResolver>();
-                                                                                                EventStorePersistentSubscriptionsClient p = provider.GetRequiredService<EventStorePersistentSubscriptionsClient>();
-                                                                                                HttpClient h = provider.GetRequiredService<HttpClient>();
-                                                                                                SubscriptionWorker worker = new SubscriptionWorker(r, p, h);
-                                                                                                worker.TraceGenerated += Worker_TraceGenerated;
-                                                                                                return worker;
-                                                                                            });
-                                          });
             return hostBuilder;
         }
 

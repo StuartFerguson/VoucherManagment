@@ -24,7 +24,7 @@
         /// <summary>
         /// The database context factory
         /// </summary>
-        private readonly IDbContextFactory<EstateReportingContext> DbContextFactory;
+        private readonly IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
 
         /// <summary>
         /// The voucher aggregate repository
@@ -40,7 +40,7 @@
         /// </summary>
         /// <param name="dbContextFactory">The database context factory.</param>
         /// <param name="voucherAggregateRepository">The voucher aggregate repository.</param>
-        public VoucherManagementManager(IDbContextFactory<EstateReportingContext> dbContextFactory,
+        public VoucherManagementManager(IDbContextFactory<EstateReportingGenericContext> dbContextFactory,
                                         IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository)
         {
             this.DbContextFactory = dbContextFactory;
@@ -63,7 +63,7 @@
                                                     String voucherCode,
                                                     CancellationToken cancellationToken)
         {
-            EstateReportingContext context = await this.DbContextFactory.GetContext(estateId, cancellationToken);
+            EstateReportingGenericContext context = await this.DbContextFactory.GetContext(estateId, cancellationToken);
 
             EstateReporting.Database.Entities.Voucher voucher = await context.Vouchers.SingleOrDefaultAsync(v => v.VoucherCode == voucherCode, cancellationToken);
 
