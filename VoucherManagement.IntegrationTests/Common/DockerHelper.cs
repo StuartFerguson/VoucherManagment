@@ -184,7 +184,7 @@ namespace VoucherManagement.IntegrationTests.Common
 
             this.SqlServerDetails = (Setup.SqlServerContainerName, Setup.SqlUserName, Setup.SqlPassword);
 
-            this.ClientDetails = ("serviceClient", "serviceClient");
+            this.ClientDetails = ("serviceClient", "Secret1");
             Logging.Enabled();
 
             Guid testGuid = Guid.NewGuid();

@@ -130,7 +130,7 @@ namespace VoucherManagement.IntegrationTests.IssueVoucher
             table3.AddRow(new string[] {
                         "serviceClient",
                         "Service Client",
-                        "serviceClient",
+                        "Secret1",
                         "estateManagement,voucherManagement",
                         "client_credentials"});
 #line 16

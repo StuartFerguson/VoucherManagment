@@ -15,7 +15,7 @@ Background:
 
 	Given the following clients exist
 	| ClientId      | ClientName     | Secret  | AllowedScopes    | AllowedGrantTypes  |
-	| serviceClient | Service Client | serviceClient | estateManagement,voucherManagement | client_credentials |
+	| serviceClient | Service Client | Secret1 | estateManagement,voucherManagement | client_credentials |
 
 	Given I have a token to access the estate management and voucher management resources
 	| ClientId      | 
