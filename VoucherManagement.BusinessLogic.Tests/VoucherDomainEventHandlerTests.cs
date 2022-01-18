@@ -31,30 +31,20 @@
     [ExcludeFromCodeCoverage]
     public partial class VoucherDomainEventHandlerTests
     {
-        private Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>> GetMockDbContextFactory()
+        private Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext>> GetMockDbContextFactory()
         {
-            return new Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingContext>>();
+            return new Mock<Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext>>();
         }
 
-        private async Task<EstateReportingContext> GetContext(String databaseName, TestDatabaseType databaseType = TestDatabaseType.InMemory)
+        private async Task<EstateReportingGenericContext> GetContext(String databaseName, TestDatabaseType databaseType = TestDatabaseType.InMemory)
         {
-            EstateReportingContext context = null;
+            EstateReportingGenericContext context = null;
             if (databaseType == TestDatabaseType.InMemory)
             {
-                DbContextOptionsBuilder<EstateReportingContext> builder = new DbContextOptionsBuilder<EstateReportingContext>()
-                                                                          .UseInMemoryDatabase(databaseName)
-                                                                          .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-                context = new EstateReportingContext(builder.Options);
-            }
-            else if (databaseType == TestDatabaseType.SqliteInMemory)
-            {
-                SqliteConnection inMemorySqlite = new SqliteConnection("Data Source=:memory:");
-                inMemorySqlite.Open();
-
-                DbContextOptionsBuilder<EstateReportingContext> builder = new DbContextOptionsBuilder<EstateReportingContext>().UseSqlite(inMemorySqlite);
-                context = new EstateReportingContext(builder.Options);
-                await context.Database.EnsureCreatedAsync();
-
+                DbContextOptionsBuilder<EstateReportingGenericContext> builder = new DbContextOptionsBuilder<EstateReportingGenericContext>()
+                                                                                 .UseInMemoryDatabase(databaseName)
+                                                                                 .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                context = new EstateReportingSqlServerContext(builder.Options);
             }
             else
             {
@@ -77,8 +67,8 @@
             Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>>();
             voucherAggregateRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                       .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientEmail);
-            
-            EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
+
+            EstateReportingGenericContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
             context.Transactions.Add(new Transaction
                                      {
                                          TransactionId = TestData.TransactionId,
@@ -127,7 +117,7 @@
             voucherAggregateRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                       .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientMobile);
 
-            EstateReportingContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
+            EstateReportingGenericContext context = await this.GetContext(Guid.NewGuid().ToString("N"), TestDatabaseType.InMemory);
             context.Transactions.Add(new Transaction
             {
                 TransactionId = TestData.TransactionId,

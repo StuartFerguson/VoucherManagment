@@ -46,7 +46,7 @@
         /// <summary>
         /// The database context factory
         /// </summary>
-        private readonly IDbContextFactory<EstateReportingContext> DbContextFactory;
+        private readonly IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
 
         #region Constructors
 
@@ -60,7 +60,7 @@
         public VoucherDomainService(IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
                                     ISecurityServiceClient securityServiceClient,
                                     IEstateClient estateClient,
-                                    IDbContextFactory<EstateReportingContext> dbContextFactory)
+                                    IDbContextFactory<EstateReportingGenericContext> dbContextFactory)
         {
             this.VoucherAggregateRepository = voucherAggregateRepository;
             this.SecurityServiceClient = securityServiceClient;
@@ -129,9 +129,9 @@
                                                                CancellationToken cancellationToken)
         {
             await this.ValidateVoucherRedemption(estateId, cancellationToken);
-                
+
             // Find the voucher based on the voucher code
-            EstateReportingContext context = await this.DbContextFactory.GetContext(estateId, cancellationToken);
+            EstateReportingGenericContext context = await this.DbContextFactory.GetContext(estateId, cancellationToken);
 
             var voucher = await context.Vouchers.SingleOrDefaultAsync(v => v.VoucherCode == voucherCode, cancellationToken);
 

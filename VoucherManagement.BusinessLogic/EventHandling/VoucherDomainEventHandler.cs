@@ -36,7 +36,7 @@
         /// <summary>
         /// The database context factory
         /// </summary>
-        private readonly IDbContextFactory<EstateReportingContext> DbContextFactory;
+        private readonly IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
 
         /// <summary>
         /// The file system
@@ -77,7 +77,7 @@
         /// <param name="fileSystem">The file system.</param>
         public VoucherDomainEventHandler(ISecurityServiceClient securityServiceClient,
                                          IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
-                                         IDbContextFactory<EstateReportingContext> dbContextFactory,
+                                         IDbContextFactory<EstateReportingGenericContext> dbContextFactory,
                                          IMessagingServiceClient messagingServiceClient,
                                          IFileSystem fileSystem)
         {
@@ -172,7 +172,7 @@
         private async Task<String> GetVoucherOperator(Voucher voucherModel,
                                                       CancellationToken cancellationToken)
         {
-            EstateReportingContext context = await this.DbContextFactory.GetContext(voucherModel.EstateId, cancellationToken);
+            EstateReportingGenericContext context = await this.DbContextFactory.GetContext(voucherModel.EstateId, cancellationToken);
 
             Transaction transaction = await context.Transactions.SingleOrDefaultAsync(t => t.TransactionId == voucherModel.TransactionId);
             Contract contract = await context.Contracts.SingleOrDefaultAsync(c => c.ContractId == transaction.ContractId);

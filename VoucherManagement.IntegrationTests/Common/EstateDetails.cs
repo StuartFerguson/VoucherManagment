@@ -39,21 +39,21 @@ namespace VoucherManagement.IntegrationTests.Common
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EstateDetails"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="EstateDetails" /> class.</summary>
         /// <param name="estateId">The estate identifier.</param>
         /// <param name="estateName">Name of the estate.</param>
+        /// <param name="estateReference"></param>
         private EstateDetails(Guid estateId,
-                              String estateName)
+                              String estateName,
+                              String estateReference)
         {
             this.EstateId = estateId;
             this.EstateName = estateName;
+            this.EstateReference = estateReference;
             this.Merchants = new Dictionary<String, Guid>();
             this.Operators = new Dictionary<String, Guid>();
             this.MerchantUsers = new Dictionary<String, Dictionary<String, String>>();
-            //this.TransactionResponses = new Dictionary<(Guid merchantId, String transactionNumber), SerialisedMessage>();
-            //this.ReconciliationResponses = new Dictionary<Guid, SerialisedMessage>();
+            this.Contracts = new List<Contract>();
             this.Contracts = new List<Contract>();
         }
 
@@ -76,6 +76,14 @@ namespace VoucherManagement.IntegrationTests.Common
         /// The estate identifier.
         /// </value>
         public Guid EstateId { get; }
+
+        /// <summary>
+        /// Gets the estate reference.
+        /// </summary>
+        /// <value>
+        /// The estate reference.
+        /// </value>
+        public String EstateReference { get; }
 
         /// <summary>
         /// Gets the name of the estate.
@@ -239,9 +247,10 @@ namespace VoucherManagement.IntegrationTests.Common
         /// <param name="estateName">Name of the estate.</param>
         /// <returns></returns>
         public static EstateDetails Create(Guid estateId,
-                                           String estateName)
+                                           String estateName,
+                                           String estateReference)
         {
-            return new EstateDetails(estateId, estateName);
+            return new EstateDetails(estateId, estateName, estateReference);
         }
 
         /// <summary>
