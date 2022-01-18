@@ -192,34 +192,29 @@ namespace VoucherManagement
             services.AddSingleton<IMessagingServiceClient, MessagingServiceClient>();
         }
 
+        private HttpClientHandler ApiEndpointHttpHandler(IServiceProvider serviceProvider)
+        {
+            return new HttpClientHandler
+                   {
+                       ServerCertificateCustomValidationCallback = (message,
+                                                                    cert,
+                                                                    chain,
+                                                                    errors) =>
+                                                                   {
+                                                                       return true;
+                                                                   }
+                   };
+        }
+
         private void ConfigureMiddlewareServices(IServiceCollection services)
         {
             services.AddHealthChecks()
-                    //.AddEventStore(Startup.EventStoreClientSettings,
-                    //               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
-                    //               name: "Eventstore",
-                    //               failureStatus: HealthStatus.Unhealthy,
-                    //               tags: new string[] { "db", "eventstore" })
                     .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
                                   healthQuery: "SELECT 1;",
                                   name: "Read Model Server",
                                   failureStatus: HealthStatus.Degraded,
                                   tags: new string[] { "db", "sql", "sqlserver" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "MessagingServiceApi")}/health"),
-                                 name: "Messaging Service",
-                                 httpMethod: HttpMethod.Get,
-                                 failureStatus: HealthStatus.Unhealthy,
-                                 tags: new string[] { "messaging", "email" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("AppSettings", "EstateManagementApi")}/health"),
-                                 name: "Estate Management Service",
-                                 httpMethod: HttpMethod.Get,
-                                 failureStatus: HealthStatus.Unhealthy,
-                                 tags: new string[] { "application", "estatemanagement" })
-                    .AddUrlGroup(new Uri($"{ConfigurationReader.GetValue("SecurityConfiguration", "Authority")}/health"),
-                                 name: "Security Service",
-                                 httpMethod: HttpMethod.Get,
-                                 failureStatus: HealthStatus.Unhealthy,
-                                 tags: new string[] { "security", "authorisation" });
+                    .AddMessagingService().AddEstateManagementService().AddSecurityService(ApiEndpointHttpHandler);
 
 
             services.AddSwaggerGen(c =>
