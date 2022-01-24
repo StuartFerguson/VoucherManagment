@@ -13,6 +13,7 @@ namespace VoucherManagement
     using System.IO;
     using System.Net.Http;
     using EventStore.Client;
+    using Lamar.Microsoft.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection;
     using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventHandling;
@@ -39,6 +40,7 @@ namespace VoucherManagement
                                                                   .AddEnvironmentVariables().Build();
 
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args);
+            hostBuilder.UseLamar();
             hostBuilder.ConfigureWebHostDefaults(webBuilder =>
                                                  {
                                                      webBuilder.UseStartup<Startup>();
@@ -47,36 +49,6 @@ namespace VoucherManagement
                                                  });
 
             return hostBuilder;
-        }
-
-        /// <summary>
-        /// Workers the trace generated.
-        /// </summary>
-        /// <param name="trace">The trace.</param>
-        /// <param name="logLevel">The log level.</param>
-        private static void Worker_TraceGenerated(string trace, LogLevel logLevel)
-        {
-            switch (logLevel)
-            {
-                case LogLevel.Trace:
-                    Logger.LogTrace(trace);
-                    break;
-                case LogLevel.Debug:
-                    Logger.LogDebug(trace);
-                    break;
-                case LogLevel.Information:
-                    Logger.LogInformation(trace);
-                    break;
-                case LogLevel.Warning:
-                    Logger.LogWarning(trace);
-                    break;
-                case LogLevel.Error:
-                    Logger.LogError(new Exception(trace));
-                    break;
-                case LogLevel.Critical:
-                    Logger.LogCritical(new Exception(trace));
-                    break;
-            }
         }
     }
 }
