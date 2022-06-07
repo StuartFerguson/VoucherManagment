@@ -3,7 +3,7 @@
     using System;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    public record VoucherFullyRedeemedEvent : DomainEventRecord.DomainEvent
+    public record VoucherFullyRedeemedEvent : DomainEvent
     {
         #region Constructors
 

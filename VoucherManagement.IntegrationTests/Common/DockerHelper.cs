@@ -103,9 +103,9 @@ namespace VoucherManagement.IntegrationTests.Common
         public async Task PopulateSubscriptionServiceConfiguration(String estateName)
         {
             var name = estateName.Replace(" ", "");
-            List<(string streamName, string groupName)> subscriptions = new List<(String, String)>();
-            subscriptions.Add((name, "Reporting"));
-            subscriptions.Add(($"EstateManagementSubscriptionStream_{name}", "Estate Management"));
+            List<(string streamName, string groupName, Int32 numberOfRetries)> subscriptions = new ();
+            subscriptions.Add((name, "Reporting",0));
+            subscriptions.Add(($"EstateManagementSubscriptionStream_{name}", "Estate Management",0));
             await this.PopulateSubscriptionServiceConfiguration(this.EventStoreHttpPort, subscriptions);
         }
         

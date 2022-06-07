@@ -137,14 +137,6 @@
                 ContractResolver = jsonIgnoreAttributeIgnorerContractResolver
             };
 
-            if (type.IsSubclassOf(typeof(DomainEventRecord.DomainEvent)))
-            {
-                var json = JsonConvert.SerializeObject(domainEvent, jsonSerialiserSettings);
-                DomainEventRecordFactory domainEventFactory = new();
-
-                return domainEventFactory.CreateDomainEvent(json, type);
-            }
-
             if (type.IsSubclassOf(typeof(DomainEvent)))
             {
                 var json = JsonConvert.SerializeObject(domainEvent, jsonSerialiserSettings);

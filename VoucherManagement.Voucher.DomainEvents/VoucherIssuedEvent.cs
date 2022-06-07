@@ -4,7 +4,7 @@
     using Newtonsoft.Json;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    public record VoucherIssuedEvent : DomainEventRecord.DomainEvent
+    public record VoucherIssuedEvent : DomainEvent
     {
         #region Constructors
 

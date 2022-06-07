@@ -12,6 +12,7 @@ namespace VoucherManagement.Tests
     using Microsoft.Extensions.DependencyInjection;
     using Moq;
     using System.Diagnostics;
+    using Microsoft.Extensions.Hosting;
     using Xunit;
 
     public class BootstrapperTests
@@ -65,6 +66,7 @@ namespace VoucherManagement.Tests
             services.AddSingleton<DiagnosticSource>(diagnosticSource);
             services.AddSingleton<DiagnosticListener>(diagnosticSource);
             services.AddSingleton<IWebHostEnvironment>(hostingEnvironment);
+            services.AddSingleton<IHostEnvironment>(hostingEnvironment);
         }
     }
 }
