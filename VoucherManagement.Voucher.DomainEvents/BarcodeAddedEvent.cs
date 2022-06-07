@@ -4,7 +4,7 @@
     using Newtonsoft.Json;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    public record BarcodeAddedEvent : DomainEventRecord.DomainEvent
+    public record BarcodeAddedEvent : DomainEvent
     {
         #region Constructors
 

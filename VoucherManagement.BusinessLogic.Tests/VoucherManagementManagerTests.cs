@@ -65,7 +65,7 @@ namespace VoucherManagement.BusinessLogic.Tests
             var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
-            Mock<IAggregateRepository<VoucherAggregate,DomainEventRecord.DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>>();
+            Mock<IAggregateRepository<VoucherAggregate,DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEvent>>();
             voucherAggregateRepository.Setup(v => v.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.GetVoucherAggregateWithRecipientMobile);
 
             VoucherManagementManager manager = new VoucherManagementManager(dbContextFactory.Object, voucherAggregateRepository.Object);
@@ -85,7 +85,7 @@ namespace VoucherManagement.BusinessLogic.Tests
             var dbContextFactory = this.GetMockDbContextFactory();
             dbContextFactory.Setup(d => d.GetContext(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(context);
 
-            Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>>();
+            Mock<IAggregateRepository<VoucherAggregate, DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEvent>>();
 
             VoucherManagementManager manager = new VoucherManagementManager(dbContextFactory.Object, voucherAggregateRepository.Object);
 

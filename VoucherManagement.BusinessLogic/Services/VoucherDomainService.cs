@@ -9,12 +9,12 @@
     using EstateManagement.Client;
     using EstateManagement.DataTransferObjects.Responses;
     using EstateReporting.Database;
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using NetBarcode;
     using SecurityService.Client;
     using SecurityService.DataTransferObjects.Responses;
     using Shared.DomainDrivenDesign.EventSourcing;
-    using Shared.EntityFramework;
     using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventStore;
     using Shared.Exceptions;
@@ -31,7 +31,7 @@
         /// <summary>
         /// The voucher aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> VoucherAggregateRepository;
+        private readonly IAggregateRepository<VoucherAggregate, DomainEvent> VoucherAggregateRepository;
 
         /// <summary>
         /// The security service client
@@ -46,7 +46,7 @@
         /// <summary>
         /// The database context factory
         /// </summary>
-        private readonly IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
+        private readonly Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
 
         #region Constructors
 
@@ -57,10 +57,10 @@
         /// <param name="securityServiceClient">The security service client.</param>
         /// <param name="estateClient">The estate client.</param>
         /// <param name="dbContextFactory">The database context factory.</param>
-        public VoucherDomainService(IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
+        public VoucherDomainService(IAggregateRepository<VoucherAggregate, DomainEvent> voucherAggregateRepository,
                                     ISecurityServiceClient securityServiceClient,
                                     IEstateClient estateClient,
-                                    IDbContextFactory<EstateReportingGenericContext> dbContextFactory)
+                                    Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext> dbContextFactory)
         {
             this.VoucherAggregateRepository = voucherAggregateRepository;
             this.SecurityServiceClient = securityServiceClient;
@@ -133,7 +133,7 @@
             // Find the voucher based on the voucher code
             EstateReportingGenericContext context = await this.DbContextFactory.GetContext(estateId, cancellationToken);
 
-            var voucher = await context.Vouchers.SingleOrDefaultAsync(v => v.VoucherCode == voucherCode, cancellationToken);
+            EstateReporting.Database.Entities.Voucher voucher = await context.Vouchers.SingleOrDefaultAsync(v => v.VoucherCode == voucherCode, cancellationToken);
 
             if (voucher == null)
             {

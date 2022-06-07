@@ -6,7 +6,7 @@ namespace VoucherManagement.Voucher.DomainEvents
     using Newtonsoft.Json;
     using Shared.DomainDrivenDesign.EventSourcing;
 
-    public record VoucherGeneratedEvent : DomainEventRecord.DomainEvent
+    public record VoucherGeneratedEvent : DomainEvent
     {
         /// <summary>
         /// Gets or sets the estate identifier.

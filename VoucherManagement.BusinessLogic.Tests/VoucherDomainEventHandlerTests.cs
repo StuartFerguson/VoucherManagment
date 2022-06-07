@@ -64,7 +64,7 @@
             Mock<ISecurityServiceClient> securityServiceClient = new Mock<ISecurityServiceClient>();
             securityServiceClient.Setup(s => s.GetToken(It.IsAny<String>(), It.IsAny<String>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TokenResponse);
 
-            Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>>();
+            Mock<IAggregateRepository<VoucherAggregate, DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEvent>>();
             voucherAggregateRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                       .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientEmail);
 
@@ -113,7 +113,7 @@
             Mock<ISecurityServiceClient> securityServiceClient = new Mock<ISecurityServiceClient>();
             securityServiceClient.Setup(s => s.GetToken(It.IsAny<String>(), It.IsAny<String>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TokenResponse);
 
-            Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent>>();
+            Mock<IAggregateRepository<VoucherAggregate, DomainEvent>> voucherAggregateRepository = new Mock<IAggregateRepository<VoucherAggregate, DomainEvent>>();
             voucherAggregateRepository.Setup(t => t.GetLatestVersion(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                                       .ReturnsAsync(TestData.GetVoucherAggregateWithRecipientMobile);
 

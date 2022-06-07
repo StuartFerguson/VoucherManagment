@@ -12,10 +12,10 @@
     using EstateReporting.Database.Entities;
     using MessagingService.Client;
     using MessagingService.DataTransferObjects;
+    using Microsoft.EntityFrameworkCore;
     using SecurityService.Client;
     using SecurityService.DataTransferObjects.Responses;
     using Shared.DomainDrivenDesign.EventSourcing;
-    using Shared.EntityFramework;
     using Shared.EventStore.Aggregate;
     using Shared.EventStore.EventHandling;
     using Shared.EventStore.EventStore;
@@ -24,7 +24,7 @@
     using Voucher.DomainEvents;
     using VoucherAggregate;
     using Voucher = Models.Voucher;
-
+    
     /// <summary>
     /// 
     /// </summary>
@@ -36,7 +36,7 @@
         /// <summary>
         /// The database context factory
         /// </summary>
-        private readonly IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
+        private readonly Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext> DbContextFactory;
 
         /// <summary>
         /// The file system
@@ -61,7 +61,7 @@
         /// <summary>
         /// The voucher aggregate repository
         /// </summary>
-        private readonly IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> VoucherAggregateRepository;
+        private readonly IAggregateRepository<VoucherAggregate, DomainEvent> VoucherAggregateRepository;
 
         #endregion
 
@@ -76,8 +76,8 @@
         /// <param name="messagingServiceClient">The messaging service client.</param>
         /// <param name="fileSystem">The file system.</param>
         public VoucherDomainEventHandler(ISecurityServiceClient securityServiceClient,
-                                         IAggregateRepository<VoucherAggregate, DomainEventRecord.DomainEvent> voucherAggregateRepository,
-                                         IDbContextFactory<EstateReportingGenericContext> dbContextFactory,
+                                         IAggregateRepository<VoucherAggregate, DomainEvent> voucherAggregateRepository,
+                                         Shared.EntityFramework.IDbContextFactory<EstateReportingGenericContext> dbContextFactory,
                                          IMessagingServiceClient messagingServiceClient,
                                          IFileSystem fileSystem)
         {
@@ -174,7 +174,7 @@
         {
             EstateReportingGenericContext context = await this.DbContextFactory.GetContext(voucherModel.EstateId, cancellationToken);
 
-            Transaction transaction = await context.Transactions.SingleOrDefaultAsync(t => t.TransactionId == voucherModel.TransactionId);
+            Transaction transaction = await context.Transactions.SingleOrDefaultAsync(t => t.TransactionId == voucherModel.TransactionId, cancellationToken);
             Contract contract = await context.Contracts.SingleOrDefaultAsync(c => c.ContractId == transaction.ContractId);
 
             return contract.Description;

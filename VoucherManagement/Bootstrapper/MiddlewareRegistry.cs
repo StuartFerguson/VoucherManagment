@@ -192,7 +192,7 @@
                                                                                    });
 
             this.AddTransient<IEventStoreContext, EventStoreContext>();
-            this.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>, AggregateRepository<VoucherAggregate.VoucherAggregate, DomainEventRecord.DomainEvent>>();
+            this.AddSingleton<IAggregateRepository<VoucherAggregate.VoucherAggregate, DomainEvent>, AggregateRepository<VoucherAggregate.VoucherAggregate, DomainEvent>>();
 
             this.AddSingleton<IDbContextFactory<EstateReportingGenericContext>, DbContextFactory<EstateReportingGenericContext>>();
         }
