@@ -41,14 +41,12 @@ public class RepositoryRegistry : ServiceRegistry
 
             Func<SocketsHttpHandler> CreateHttpMessageHandler = () => new SocketsHttpHandler
                                                                       {
-
                                                                           SslOptions = new SslClientAuthenticationOptions
                                                                                        {
                                                                                            RemoteCertificateValidationCallback = (sender,
                                                                                                certificate,
                                                                                                chain,
                                                                                                errors) => {
-
                                                                                                return true;
                                                                                            }
                                                                                        }
