@@ -100,15 +100,33 @@ namespace VoucherManagement.IntegrationTests.Common
         /// Populates the subscription service configuration.
         /// </summary>
         /// <param name="estateName">Name of the estate.</param>
-        public async Task PopulateSubscriptionServiceConfiguration(String estateName)
+        public async Task PopulateSubscriptionServiceConfiguration(String estateName, Boolean isSecureEventStore)
         {
             var name = estateName.Replace(" ", "");
             List<(string streamName, string groupName, Int32 numberOfRetries)> subscriptions = new ();
             subscriptions.Add((name, "Reporting",5));
             subscriptions.Add(($"EstateManagementSubscriptionStream_{name}", "Estate Management",0));
-            await this.PopulateSubscriptionServiceConfiguration(this.EventStoreHttpPort, subscriptions);
+            await this.PopulateSubscriptionServiceConfiguration(this.EventStoreHttpPort, subscriptions, isSecureEventStore);
         }
-        
+
+        public Boolean IsSecureEventStore { get; private set; }
+
+        protected override String GenerateEventStoreConnectionString()
+        {
+            // TODO: this could move to shared
+            String eventStoreAddress = $"esdb://admin:changeit@{this.EventStoreContainerName}:{DockerHelper.EventStoreHttpDockerPort}";
+            if (this.IsSecureEventStore)
+            {
+                eventStoreAddress = $"{eventStoreAddress}?tls=true&tlsVerifyCert=false";
+            }
+            else
+            {
+                eventStoreAddress = $"{eventStoreAddress}?tls=false&tlsVerifyCert=false";
+            }
+
+            return eventStoreAddress;
+        }
+
         #region Methods
 
         /// <summary>
@@ -117,6 +135,20 @@ namespace VoucherManagement.IntegrationTests.Common
         /// <param name="scenarioName">Name of the scenario.</param>
         public override async Task StartContainersForScenarioRun(String scenarioName)
         {
+            String IsSecureEventStoreEnvVar = Environment.GetEnvironmentVariable("IsSecureEventStore");
+
+            if (IsSecureEventStoreEnvVar == null)
+            {
+                // No env var set so default to insecure
+                this.IsSecureEventStore = false;
+            }
+            else
+            {
+                // We have the env var so we set the secure flag based on the value in the env var
+                Boolean.TryParse(IsSecureEventStoreEnvVar, out Boolean isSecure);
+                this.IsSecureEventStore = isSecure;
+            }
+
             this.HostTraceFolder = FdOs.IsWindows() ? $"D:\\home\\txnproc\\trace\\{scenarioName}" : $"//home//txnproc//trace//{scenarioName}";
 
             this.SqlServerDetails = (Setup.SqlServerContainerName, Setup.SqlUserName, Setup.SqlPassword);
@@ -140,13 +172,20 @@ namespace VoucherManagement.IntegrationTests.Common
 
             INetworkService testNetwork = DockerHelper.SetupTestNetwork();
             this.TestNetworks.Add(testNetwork);
-            IContainerService eventStoreContainer = this.SetupEventStoreContainer("eventstore/eventstore:21.10.0-buster-slim", testNetwork);
+
+            IContainerService eventStoreContainer =
+                this.SetupEventStoreContainer("eventstore/eventstore:21.10.0-buster-slim", testNetwork, isSecure: this.IsSecureEventStore);
             this.EventStoreHttpPort = eventStoreContainer.ToHostExposedEndpoint($"{DockerHelper.EventStoreHttpDockerPort}/tcp").Port;
 
-            String insecureEventStoreEnvironmentVariable = "EventStoreSettings:Insecure=true";
+            String insecureEventStoreEnvironmentVariable = "EventStoreSettings:Insecure=True";
+            if (this.IsSecureEventStore)
+            {
+                insecureEventStoreEnvironmentVariable = "EventStoreSettings:Insecure=False";
+            }
+
             String persistentSubscriptionPollingInSeconds = "AppSettings:PersistentSubscriptionPollingInSeconds=10";
             String internalSubscriptionServiceCacheDuration = "AppSettings:InternalSubscriptionServiceCacheDuration=0";
-            
+
             IContainerService estateManagementContainer = this.SetupEstateManagementContainer("stuartferguson/estatemanagement", new List<INetworkService>
                                                                                                   {
                                                                                                       testNetwork,
@@ -226,7 +265,7 @@ namespace VoucherManagement.IntegrationTests.Common
             this.SecurityServiceClient = new SecurityServiceClient(SecurityServiceBaseAddressResolver, httpClient);
             this.VoucherManagementClient = new VoucherManagementClient(VoucherManagementBaseAddressResolver, httpClient);
 
-            await this.LoadEventStoreProjections(this.EventStoreHttpPort).ConfigureAwait(false);
+            await this.LoadEventStoreProjections(this.EventStoreHttpPort, this.IsSecureEventStore).ConfigureAwait(false);
         }
         
         private async Task RemoveEstateReadModel()
