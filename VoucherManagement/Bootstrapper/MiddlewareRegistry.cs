@@ -12,6 +12,7 @@
     using Microsoft.OpenApi.Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using Shared.EventStore.Extensions;
     using Shared.Extensions;
     using Shared.General;
     using Swashbuckle.AspNetCore.Filters;
@@ -21,6 +22,11 @@
         public MiddlewareRegistry()
         {
             this.AddHealthChecks()
+                .AddEventStore(Startup.EventStoreClientSettings,
+                               userCredentials: Startup.EventStoreClientSettings.DefaultCredentials,
+                               name: "Eventstore",
+                               failureStatus: HealthStatus.Unhealthy,
+                               tags: new[] { "db", "eventstore" })
                     .AddSqlServer(connectionString: ConfigurationReader.GetConnectionString("HealthCheck"),
                                   healthQuery: "SELECT 1;",
                                   name: "Read Model Server",
