@@ -38,44 +38,14 @@ namespace VoucherManagement.IntegrationTests.Common
         /// </summary>
         public ISecurityServiceClient SecurityServiceClient;
 
-        /// <summary>
-        /// The test identifier
-        /// </summary>
-        public Guid TestId;
+        
 
         /// <summary>
         /// The voucher management client
         /// </summary>
         public IVoucherManagementClient VoucherManagementClient;
 
-        /// <summary>
-        /// The containers
-        /// </summary>
-        protected List<IContainerService> Containers;
-
-        /// <summary>
-        /// The estate management API port
-        /// </summary>
-        protected Int32 EstateManagementApiPort;
-
-        /// <summary>
-        /// The event store HTTP port
-        /// </summary>
-        protected Int32 EventStoreHttpPort;
-
-        /// <summary>
-        /// The security service port
-        /// </summary>
-        protected Int32 SecurityServicePort;
-
-        /// <summary>
-        /// The test networks
-        /// </summary>
-        protected List<INetworkService> TestNetworks;
-
         private readonly TestingContext TestingContext;
-
-        private Int32 VoucherManagementPort;
 
         #endregion
 
@@ -86,46 +56,12 @@ namespace VoucherManagement.IntegrationTests.Common
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="testingContext">The testing context.</param>
-        public DockerHelper(NlogLogger logger, TestingContext testingContext)
+        public DockerHelper()
         {
-            this.Logger = logger;
-            this.TestingContext = testingContext;
-            this.Containers = new List<IContainerService>();
-            this.TestNetworks = new List<INetworkService>();
+            this.TestingContext = new TestingContext();
         }
 
         #endregion
-
-        /// <summary>
-        /// Populates the subscription service configuration.
-        /// </summary>
-        /// <param name="estateName">Name of the estate.</param>
-        public async Task PopulateSubscriptionServiceConfiguration(String estateName, Boolean isSecureEventStore)
-        {
-            var name = estateName.Replace(" ", "");
-            List<(string streamName, string groupName, Int32 numberOfRetries)> subscriptions = new ();
-            subscriptions.Add((name, "Reporting",5));
-            subscriptions.Add(($"EstateManagementSubscriptionStream_{name}", "Estate Management",0));
-            await this.PopulateSubscriptionServiceConfiguration(this.EventStoreHttpPort, subscriptions, isSecureEventStore);
-        }
-
-        public Boolean IsSecureEventStore { get; private set; }
-
-        protected override String GenerateEventStoreConnectionString()
-        {
-            // TODO: this could move to shared
-            String eventStoreAddress = $"esdb://admin:changeit@{this.EventStoreContainerName}:{DockerHelper.EventStoreHttpDockerPort}";
-            if (this.IsSecureEventStore)
-            {
-                eventStoreAddress = $"{eventStoreAddress}?tls=true&tlsVerifyCert=false";
-            }
-            else
-            {
-                eventStoreAddress = $"{eventStoreAddress}?tls=false&tlsVerifyCert=false";
-            }
-
-            return eventStoreAddress;
-        }
 
         #region Methods
 
@@ -135,117 +71,10 @@ namespace VoucherManagement.IntegrationTests.Common
         /// <param name="scenarioName">Name of the scenario.</param>
         public override async Task StartContainersForScenarioRun(String scenarioName)
         {
-            String IsSecureEventStoreEnvVar = Environment.GetEnvironmentVariable("IsSecureEventStore");
-
-            if (IsSecureEventStoreEnvVar == null)
-            {
-                // No env var set so default to insecure
-                this.IsSecureEventStore = false;
-            }
-            else
-            {
-                // We have the env var so we set the secure flag based on the value in the env var
-                Boolean.TryParse(IsSecureEventStoreEnvVar, out Boolean isSecure);
-                this.IsSecureEventStore = isSecure;
-            }
-
-            this.HostTraceFolder = FdOs.IsWindows() ? $"D:\\home\\txnproc\\trace\\{scenarioName}" : $"//home//txnproc//trace//{scenarioName}";
-
-            this.SqlServerDetails = (Setup.SqlServerContainerName, Setup.SqlUserName, Setup.SqlPassword);
-
-            this.ClientDetails = ("serviceClient", "Secret1");
-            Logging.Enabled();
-
-            Guid testGuid = Guid.NewGuid();
-            this.TestId = testGuid;
-
-            this.Logger.LogInformation($"Test Id is {testGuid}");
-
-            // Setup the container names
-            this.SecurityServiceContainerName = $"securityservice{testGuid:N}";
-            this.EstateManagementContainerName = $"estate{testGuid:N}";
-            this.EventStoreContainerName = $"eventstore{testGuid:N}";
-            this.EstateReportingContainerName = $"estatereporting{testGuid:N}";
-            this.VoucherManagementContainerName = $"vouchermanagement{testGuid:N}";
-
-            this.DockerCredentials = ("https://www.docker.com", "stuartferguson", "Sc0tland");
-
-            INetworkService testNetwork = DockerHelper.SetupTestNetwork();
-            this.TestNetworks.Add(testNetwork);
-
-            IContainerService eventStoreContainer =
-                this.SetupEventStoreContainer("eventstore/eventstore:21.10.0-buster-slim", testNetwork, isSecure: this.IsSecureEventStore);
-            this.EventStoreHttpPort = eventStoreContainer.ToHostExposedEndpoint($"{DockerHelper.EventStoreHttpDockerPort}/tcp").Port;
-
-            String insecureEventStoreEnvironmentVariable = "EventStoreSettings:Insecure=True";
-            if (this.IsSecureEventStore)
-            {
-                insecureEventStoreEnvironmentVariable = "EventStoreSettings:Insecure=False";
-            }
-
-            String persistentSubscriptionPollingInSeconds = "AppSettings:PersistentSubscriptionPollingInSeconds=10";
-            String internalSubscriptionServiceCacheDuration = "AppSettings:InternalSubscriptionServiceCacheDuration=0";
-
-            IContainerService estateManagementContainer = this.SetupEstateManagementContainer("stuartferguson/estatemanagement", new List<INetworkService>
-                                                                                                  {
-                                                                                                      testNetwork,
-                                                                                                      Setup.DatabaseServerNetwork
-                                                                                                  },
-                                                                                              true,
-                                                                                              additionalEnvironmentVariables: new List<String>
-                                                                                                  {
-                                                                                                      insecureEventStoreEnvironmentVariable,
-                                                                                                      internalSubscriptionServiceCacheDuration,
-                                                                                                      persistentSubscriptionPollingInSeconds
-                                                                                                  });
-
-            IContainerService securityServiceContainer = this.SetupSecurityServiceContainer("stuartferguson/securityservice",
-                                                                                                    testNetwork,
-                                                                                                    true);
-
-            IContainerService voucherManagementContainer = this.SetupVoucherManagementContainer("vouchermanagement",
-                                                                                                              new List<INetworkService>
-                                                                                                              {
-                                                                                                                  testNetwork,
-                                                                                                                  Setup.DatabaseServerNetwork
-                                                                                                              }, additionalEnvironmentVariables: new List<String>
-                                                                                                                  {
-                                                                                                                      insecureEventStoreEnvironmentVariable,
-                                                                                                                      internalSubscriptionServiceCacheDuration,
-                                                                                                                      persistentSubscriptionPollingInSeconds
-                                                                                                                  });
-
-            IContainerService estateReportingContainer = this.SetupEstateReportingContainer("stuartferguson/estatereporting",
-                                                                                            new List<INetworkService>
-                                                                                            {
-                                                                                                testNetwork,
-                                                                                                Setup.DatabaseServerNetwork,
-                                                                                            },
-                                                                                            true,
-                                                                                            additionalEnvironmentVariables: new List<String>
-                                                                                                {
-                                                                                                    insecureEventStoreEnvironmentVariable,
-                                                                                                    internalSubscriptionServiceCacheDuration,
-                                                                                                    persistentSubscriptionPollingInSeconds
-                                                                                                });
+            await base.StartContainersForScenarioRun(scenarioName);
             
-            this.Containers.AddRange(new List<IContainerService>
-                                     {
-                                         eventStoreContainer,
-                                         estateManagementContainer,
-                                         securityServiceContainer,
-                                         voucherManagementContainer,
-                                         estateReportingContainer,
-                                     });
-
-            // Cache the ports
-            this.EstateManagementApiPort = estateManagementContainer.ToHostExposedEndpoint("5000/tcp").Port;
-            this.SecurityServicePort = securityServiceContainer.ToHostExposedEndpoint("5001/tcp").Port;
-            this.EventStoreHttpPort = eventStoreContainer.ToHostExposedEndpoint("2113/tcp").Port;
-            this.VoucherManagementPort = voucherManagementContainer.ToHostExposedEndpoint("5007/tcp").Port;
-
             // Setup the base address resolvers
-            String EstateManagementBaseAddressResolver(String api) => $"http://127.0.0.1:{this.EstateManagementApiPort}";
+            String EstateManagementBaseAddressResolver(String api) => $"http://127.0.0.1:{this.EstateManagementPort}";
             String SecurityServiceBaseAddressResolver(String api) => $"https://127.0.0.1:{this.SecurityServicePort}";
             String VoucherManagementBaseAddressResolver(String api) => $"http://127.0.0.1:{this.VoucherManagementPort}";
 
@@ -264,8 +93,6 @@ namespace VoucherManagement.IntegrationTests.Common
             this.EstateClient = new EstateClient(EstateManagementBaseAddressResolver, httpClient);
             this.SecurityServiceClient = new SecurityServiceClient(SecurityServiceBaseAddressResolver, httpClient);
             this.VoucherManagementClient = new VoucherManagementClient(VoucherManagementBaseAddressResolver, httpClient);
-
-            await this.LoadEventStoreProjections(this.EventStoreHttpPort, this.IsSecureEventStore).ConfigureAwait(false);
         }
         
         private async Task RemoveEstateReadModel()
@@ -293,24 +120,7 @@ namespace VoucherManagement.IntegrationTests.Common
         {
             await RemoveEstateReadModel().ConfigureAwait(false);
 
-            if (this.Containers.Any())
-            {
-                foreach (IContainerService containerService in this.Containers)
-                {
-                    containerService.StopOnDispose = true;
-                    containerService.RemoveOnDispose = true;
-                    containerService.Dispose();
-                }
-            }
-
-            if (this.TestNetworks.Any())
-            {
-                foreach (INetworkService networkService in this.TestNetworks)
-                {
-                    networkService.Stop();
-                    networkService.Remove(true);
-                }
-            }
+            await base.StopContainersForScenarioRun();
         }
 
         #endregion
