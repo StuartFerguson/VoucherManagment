@@ -128,7 +128,7 @@ namespace VoucherManagement
                                                            new HealthCheckOptions
                                                            {
                                                                Predicate = _ => true,
-                                                               ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                                                               ResponseWriter = Shared.HealthChecks.HealthCheckMiddleware.WriteResponse
                                                            });
                              });
 
