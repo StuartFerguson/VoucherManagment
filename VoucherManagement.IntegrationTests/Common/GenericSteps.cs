@@ -43,7 +43,7 @@ namespace VoucherManagement.IntegrationTests.Common
             this.TestingContext.DockerHelper.SqlCredentials = Setup.SqlCredentials;
             this.TestingContext.DockerHelper.SqlServerContainerName = "sharedsqlserver";
 
-            this.TestingContext.DockerHelper.SetImageDetails(ContainerType.VoucherManagement, ("couchermanagement", false));
+            this.TestingContext.DockerHelper.SetImageDetails(ContainerType.VoucherManagement, ("vouchermanagement", false));
 
             this.TestingContext.Logger = logger;
             this.TestingContext.Logger.LogInformation("About to Start Containers for Scenario Run");
